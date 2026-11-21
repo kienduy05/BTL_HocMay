@@ -4,6 +4,7 @@
 - [2026-11-20] README.md, RULES.md, AGENTS.md — Kiên
 - [2026-11-21] A2: core.py, logistic.py (IRLS), softmax.py (GD-Armijo, L-BFGS, SoftmaxRegression) + 36 test — Kiên
 - [2026-11-21] A2_doi_chieu.ipynb: E1–E5 → results/A2_*.csv, A2_*.png (5 seed, ~110 s) — Kiên
+- [2026-11-21] C1_newton_tay.ipynb, C3_kha_tach.ipynb — Kiên
 
 
 
