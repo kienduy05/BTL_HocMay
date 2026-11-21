@@ -10,6 +10,8 @@ X có thể là dense (n, d) hoặc scipy.sparse CSR; không bao giờ đổi X 
 Nhãn y: mảng số nguyên (n,) trong {0, ..., K-1} theo core.LABELS; one-hot chỉ tạo bên trong.
 """
 
+import warnings
+
 import numpy as np
 
 from core import logsumexp, softmax
@@ -87,7 +89,8 @@ def fit_gd_armijo(X, y, K, lam=0.0, sample_weight=None, W_init=None, b_init=None
     X: (n, d) dense hoặc CSR; y: (n,) int; K: số lớp (không suy ra từ y).
     Trả về (W (d, K), b (K,), history).
     history: "loss", "grad_norm" (ghi ở mọi vòng kể cả vòng 0, dài m + 1),
-             "step", "n_backtrack" (mỗi bước đã chấp nhận, dài m).
+             "step", "n_backtrack" (mỗi bước đã chấp nhận, dài m),
+             "stop_reason" ∈ {"grad_tol", "rel_loss", "max_iter", "armijo_fail"}.
     Bước thử: vòng đầu t = t0, các vòng sau t = 2·(bước chấp nhận trước),
     nhân beta tới khi f(θ - t·g) ≤ f(θ) - c·t·‖g‖².
     Dừng khi ‖g‖ < tol, hoặc loss giảm tương đối < 1e-10 trong 10 vòng liền,
@@ -123,8 +126,10 @@ def fit_gd_armijo(X, y, K, lam=0.0, sample_weight=None, W_init=None, b_init=None
     t_prev = None
     small = 0
     max_backtrack = 100
+    stop_reason = None
     for _ in range(max_iter):
         if np.sqrt(gsq) < tol:
+            stop_reason = "grad_tol"
             break
         # Trên đường θ - t·g: Z(t) = Z - t·(X dW + db), ‖W(t)‖² khai triển theo t,
         # nên mỗi lần thử bước chỉ tốn O(nK).
@@ -141,6 +146,7 @@ def fit_gd_armijo(X, y, K, lam=0.0, sample_weight=None, W_init=None, b_init=None
                 break
             t *= beta
         if not accepted:
+            stop_reason = "armijo_fail"
             break
         rel = (f - f_new) / max(abs(f), 1e-300)
         W = W - t * dW
@@ -154,7 +160,12 @@ def fit_gd_armijo(X, y, K, lam=0.0, sample_weight=None, W_init=None, b_init=None
         history["n_backtrack"].append(k)
         small = small + 1 if rel < 1e-10 else 0
         if small >= 10:
+            stop_reason = "rel_loss"
             break
+    if stop_reason is None:
+        # Hết vòng lặp: nếu điểm cuối đã thỏa ‖g‖ < tol thì vẫn tính là hội tụ.
+        stop_reason = "grad_tol" if np.sqrt(gsq) < tol else "max_iter"
+    history["stop_reason"] = stop_reason
     return W, b, history
 
 
@@ -225,6 +236,23 @@ class SoftmaxRegression:
         else:
             raise ValueError("solver phải là 'gd_armijo' hoặc 'lbfgs'")
         self.W_, self.b_, self.history_ = W, b, hist
+
+        if self.solver == "gd_armijo":
+            self.n_iter_ = len(hist["step"])
+            stop_reason = hist["stop_reason"]
+            self.converged_ = stop_reason in ("grad_tol", "rel_loss")
+            grad_norm = hist["grad_norm"][-1]
+        else:
+            self.n_iter_ = int(hist.nit)
+            self.converged_ = bool(hist.success)
+            stop_reason = str(hist.message)
+            grad_norm = float(np.linalg.norm(hist.jac))
+        if not self.converged_:
+            warnings.warn(
+                f"SoftmaxRegression ({self.solver}) chưa hội tụ: λ = {self.lam:g}, "
+                f"n_iter_ = {self.n_iter_}, ‖g‖ cuối = {grad_norm:.3g}, "
+                f"stop_reason = {stop_reason}",
+                RuntimeWarning, stacklevel=2)
         return self
 
     def decision_function(self, X):
@@ -252,3 +280,31 @@ class SoftmaxRegression:
             model.b_ = f["b"].copy()
         model.history_ = None
         return model
+
+
+def fit_path(X, y, lams, n_classes=3, sample_weight=None, tol=1e-6, max_iter=2000):
+    """Fit SoftmaxRegression (solver "gd_armijo") cho cả dãy λ, có warm start.
+
+    X: (n, d) dense hoặc CSR; y: (n,) int; lams: dãy m giá trị λ (thứ tự bất kỳ);
+    sample_weight: (n,) hoặc None.
+    Trả về list m mô hình, mô hình thứ i ứng với lams[i] (ĐÚNG thứ tự đầu vào);
+    mỗi mô hình có W_ (d, K), b_ (K,), history_, n_iter_, converged_.
+
+    Lý do: số vòng của hạ gradient tỉ lệ với số điều kiện κ ≈ L/λ, nên λ nhỏ hội tụ
+    chậm. Bên trong, λ được sắp GIẢM dần: λ lớn nhất khởi tạo mặc định (hội tụ nhanh),
+    mỗi λ sau bắt đầu từ nghiệm (W_, b_) của λ liền trước — nghiệm này đã gần nghiệm
+    mới nên quãng đường phải đi ngắn hơn nhiều so với khởi tạo từ 0.
+    """
+    lams = [float(lam) for lam in lams]
+    order = sorted(range(len(lams)), key=lambda i: lams[i], reverse=True)
+    models = [None] * len(lams)
+    prev = None
+    for i in order:
+        model = SoftmaxRegression(lam=lams[i], n_classes=n_classes, solver="gd_armijo",
+                                  tol=tol, max_iter=max_iter, warm_start=True)
+        if prev is not None:
+            model.W_, model.b_ = prev.W_.copy(), prev.b_.copy()
+        model.fit(X, y, sample_weight=sample_weight)
+        models[i] = model
+        prev = model
+    return models
