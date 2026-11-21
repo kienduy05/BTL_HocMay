@@ -1,11 +1,14 @@
 """[A3] Khung GLM: IRLS chung cho họ Bernoulli, Poisson, Gauss (Đức).
 
 Mô hình: η_i = x_i·w + b,  μ_i = g⁻¹(η_i),  Var(y_i) ∝ V(μ_i).
-Mỗi họ phân phối là một lớp con của `Family`, khai báo:
+Mỗi họ phân phối là một lớp con của `Family`, bắt buộc khai báo 5 hàm:
     inverse_link(η)  μ = g⁻¹(η)
+    link(μ)          η = g(μ)          (dùng để khởi tạo b = g(ȳ))
     dmu_deta(η)      dμ/dη
     variance(μ)      V(μ)
     nll(y, η)        −log p(y | η), bỏ hằng số không phụ thuộc η
+và tùy chọn: check_y (miền của y), init_mean (chặn ȳ vào miền của g),
+residual, irls_weights (bản ổn định số cho liên kết chính tắc).
 Thêm họ mới (ví dụ Gamma) chỉ cần viết thêm một lớp con, không sửa `fit_glm`.
 
 Loss(w, b) = (1/n) Σ_i nll(y_i, η_i) + (λ/2)‖w‖²   (b không bị phạt; φ = 1),
@@ -16,7 +19,8 @@ IRLS (Fisher scoring) cho θ = (w, b), X̃ = [X, 1]:
     (X̃ᵀ diag(W) X̃ / n + λR) θ_mới = X̃ᵀ [W ⊙ η + a ⊙ (y − μ)] / n
 Vế phải là X̃ᵀ W z / n với z = η + (y − μ)/(dμ/dη) (biến phản hồi làm việc),
 viết lại để không chia cho dμ/dη ≈ 0. Với liên kết chính tắc (cả ba họ ở đây),
-a ≡ 1 và W = V(μ): IRLS trùng với Newton. Có giảm nửa bước khi loss tăng.
+a ≡ 1 và W = V(μ): IRLS trùng với Newton. Có giảm nửa bước khi loss tăng;
+nếu chia đôi hết `max_halving` lần mà loss vẫn tăng thì dừng, giữ nghiệm cũ.
 """
 
 import numpy as np
@@ -32,22 +36,31 @@ class Family:
     name = "base"
 
     def inverse_link(self, eta):
+        """μ = g⁻¹(η). eta: (n,) → (n,)."""
         raise NotImplementedError
 
     def link(self, mu):
+        """η = g(μ). mu: (n,) hoặc vô hướng → cùng shape."""
         raise NotImplementedError
 
     def dmu_deta(self, eta):
+        """dμ/dη. eta: (n,) → (n,)."""
         raise NotImplementedError
 
     def variance(self, mu):
+        """Hàm phương sai V(μ). mu: (n,) → (n,)."""
         raise NotImplementedError
 
     def nll(self, y, eta):
+        """−log p(y | η) từng mẫu, bỏ hằng số. y, eta: (n,) → (n,)."""
         raise NotImplementedError
 
     def check_y(self, y):
-        """Kiểm tra miền giá trị của y; sai thì raise ValueError."""
+        """Kiểm tra miền giá trị của y (n,); sai thì raise ValueError."""
+
+    def init_mean(self, y):
+        """ȳ dùng để khởi tạo b = g(ȳ), đã chặn vào miền xác định của g. y: (n,) → float."""
+        return float(np.mean(y))
 
     def residual(self, y, eta):
         """y − μ, (n,)."""
@@ -84,6 +97,9 @@ class Bernoulli(Family):
         if not np.all((y == 0) | (y == 1)):
             raise ValueError("Bernoulli: y phải thuộc {0, 1}")
 
+    def init_mean(self, y):
+        return float(np.clip(np.mean(y), 1e-3, 1 - 1e-3))    # logit(0), logit(1) = ±∞
+
     def residual(self, y, eta):
         # y − σ(η) = y·σ(−η) − (1 − y)·σ(η): không mất chính xác khi σ(η) ≈ 1
         return y * sigmoid(-eta) - (1.0 - y) * sigmoid(eta)
@@ -94,7 +110,11 @@ class Bernoulli(Family):
 
 
 class Poisson(Family):
-    """y ∈ {0, 1, 2, ...}, liên kết log: μ = e^η, V(μ) = μ."""
+    """y ∈ {0, 1, 2, ...}, liên kết log: μ = e^η, V(μ) = μ.
+
+    Lưu ý: η được chặn ≤ 700 trước khi lấy mũ, nên với η > 700 thì μ bị giữ ở
+    e^700 ≈ 1e304 (không báo lỗi). Trường hợp này không xảy ra với dữ liệu đếm hợp lý.
+    """
 
     name = "poisson"
 
@@ -117,6 +137,9 @@ class Poisson(Family):
     def check_y(self, y):
         if np.any(y < 0) or not np.allclose(y, np.round(y)):
             raise ValueError("Poisson: y phải là số nguyên không âm")
+
+    def init_mean(self, y):
+        return max(float(np.mean(y)), 1e-3)                    # log(0) = −∞
 
     def irls_weights(self, eta):
         return self.inverse_link(eta), np.ones_like(eta)
@@ -206,27 +229,21 @@ def fit_glm(X, y, family="bernoulli", lam=0.0, w_init=None, b_init=None,
     lam: λ ≥ 0 (không phạt b).
     w_init: (d,) hoặc None (= 0); b_init: float hoặc None (= g(ȳ), chặn vào miền hợp lệ).
     Trả về (w (d,), b float, history).
-    history: dict các list "w", "b", "loss", "grad_norm", ghi ở MỌI vòng kể cả vòng 0.
-    Dừng khi ‖grad‖ < tol hoặc đủ max_iter bước. Mỗi bước, nếu loss tăng thì giảm
-    nửa bước tối đa `max_halving` lần.
+    history: dict các list "w", "b", "loss", "grad_norm", ghi ở MỌI vòng kể cả vòng 0,
+    và "stop_reason": 'tol' | 'max_iter' | 'no_descent'.
+    Dừng khi ‖grad‖ < tol ('tol') hoặc đủ max_iter bước ('max_iter'). Mỗi bước, nếu loss
+    tăng thì chia đôi bước, tối đa `max_halving` lần; nếu vẫn tăng thì dừng và giữ nghiệm
+    cũ ('no_descent'). Vì vậy loss không bao giờ tăng quá 1e-12 (sai số làm tròn) qua các vòng.
     """
     fam = get_family(family)
     X, y = _check_Xy(X, y, fam)
     n, d = X.shape
     w = np.zeros(d) if w_init is None else np.asarray(w_init, dtype=float).ravel().copy()
-    if b_init is None:
-        ybar = float(np.mean(y))
-        if fam.name == "bernoulli":
-            ybar = float(np.clip(ybar, 1e-3, 1 - 1e-3))
-        elif fam.name == "poisson":
-            ybar = max(ybar, 1e-3)
-        b = float(fam.link(ybar))
-    else:
-        b = float(b_init)
+    b = float(fam.link(fam.init_mean(y))) if b_init is None else float(b_init)
 
     Xa = np.hstack([X, np.ones((n, 1))])               # (n, d+1)
     R = np.diag(np.r_[np.full(d, lam), 0.0])           # (d+1, d+1)
-    history = {"w": [], "b": [], "loss": [], "grad_norm": []}
+    history = {"w": [], "b": [], "loss": [], "grad_norm": [], "stop_reason": "max_iter"}
 
     def record(w, b):
         loss, g = loss_grad(w, b, X, y, fam, lam)
@@ -239,31 +256,41 @@ def fit_glm(X, y, family="bernoulli", lam=0.0, w_init=None, b_init=None,
 
     loss, gn = record(w, b)
     theta = np.r_[w, b]
-    for _ in range(max_iter):
+    for it in range(max_iter + 1):          # vòng cuối chỉ để kiểm tra tol sau bước thứ max_iter
         if gn < tol:
+            history["stop_reason"] = "tol"
+            break
+        if it == max_iter:
             break
         eta = Xa @ theta
         W, a = fam.irls_weights(eta)
         rhs = Xa.T @ (W * eta + a * fam.residual(y, eta)) / n
         A = (Xa * W[:, None]).T @ Xa / n + R
-        theta_new = _solve(A, rhs)
+        step = _solve(A, rhs) - theta
 
-        # giảm nửa bước nếu loss tăng (an toàn cho Poisson khi khởi tạo xa)
-        step = theta_new - theta
-        for _ in range(max_halving):
+        # thử bước đầy đủ, rồi chia đôi tối đa max_halving lần nếu loss tăng
+        accepted = False
+        for _ in range(max_halving + 1):
             cand = theta + step
             new_loss, _ = loss_grad(cand[:d], cand[d], X, y, fam, lam)
             if np.isfinite(new_loss) and new_loss <= loss + 1e-12:
+                accepted = True
                 break
             step = step / 2.0
-        theta = theta + step
+        if not accepted:
+            history["stop_reason"] = "no_descent"
+            break
+        theta = cand
         w, b = theta[:d].copy(), float(theta[d])
         loss, gn = record(w, b)
     return w, b, history
 
 
 def predict(X, w, b, family="bernoulli"):
-    """Kỳ vọng μ = g⁻¹(Xw + b). X: (n, d); w: (d,); b: float. Trả về (n,)."""
+    """Kỳ vọng μ = g⁻¹(Xw + b). X: (n, d); w: (d,); b: float. Trả về (n,).
+
+    Với Poisson, η > 700 bị chặn nên μ ≤ e^700 ≈ 1e304 (xem docstring lớp Poisson).
+    """
     fam = get_family(family)
     X = np.asarray(X, dtype=float)
     if X.ndim == 1:

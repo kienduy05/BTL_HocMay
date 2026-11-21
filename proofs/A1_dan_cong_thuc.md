@@ -49,9 +49,11 @@ Với mọi $v$, $v^\top H v = \sum_i s_i (x_i^\top v)^2 \ge 0$, nên $L$ lồi;
 đủ thì $H \succ 0$ và $L$ lồi chặt. Khi dữ liệu khả tách tuyến tính, $L$ vẫn giảm mãi khi
 $\|w\| \to \infty$ nên không có cực tiểu hữu hạn (B2, C3).
 
-**Bước Newton là IRLS.** Thay gradient và Hessian vào $w^{+} = w - H^{-1}\nabla L$:
+**Bước Newton là IRLS.** Thay gradient và Hessian vào $w^{+} = w - H^{-1}\nabla L$, rồi đưa
+$w = (X^\top S X)^{-1}X^\top S X w$ vào trong ngoặc:
 $$
-w^{+} = (X^\top S X)^{-1} X^\top S\, u, \qquad u = Xw + S^{-1}(y - p).
+w^{+} = w + (X^\top S X)^{-1} X^\top (y - p)
+= (X^\top S X)^{-1} X^\top S\, u, \qquad u = Xw + S^{-1}(y - p).
 $$
 Mỗi bước Newton là một bài toán bình phương tối thiểu có trọng số $\min_w \sum_i s_i(u_i - x_i^\top w)^2$
 với trọng số $S$ tính lại sau mỗi vòng, nên gọi là IRLS. Khi cài, giải hệ
@@ -104,8 +106,11 @@ $L_\lambda = L + \frac{\lambda}{2}\|w\|^2$ (nhị phân), $L_\lambda = L + \frac
 Hệ quả khi $\lambda > 0$:
 
 - Hessian theo trọng số $\succeq \lambda I \succ 0$: nghiệm tồn tại và duy nhất, kể cả khi dữ liệu
-  khả tách hoặc tham số softmax không định danh. Riêng $b$ của softmax vẫn sai khác một hằng số
-  cộng chung, nhưng xác suất $P$ là duy nhất.
+  khả tách hoặc tham số softmax không định danh, **miễn là mỗi lớp đều xuất hiện trong dữ liệu**.
+  Vì $b$ không bị phạt, nếu một lớp vắng mặt thì loss vẫn giảm mãi khi hệ số chặn của lớp đó
+  $\to -\infty$ (ví dụ $y$ toàn 0 với $\lambda = 1$: IRLS đẩy $b$ tới $-18{,}9$ rồi dừng chỉ vì
+  gradient đã nhỏ hơn ngưỡng). Riêng $b$ của softmax vẫn sai khác một hằng số cộng chung, nhưng
+  xác suất $P$ là duy nhất.
 - Hệ Newton $(X^\top S X + \lambda I)\Delta = -\nabla L_\lambda$ luôn giải được, trị riêng nhỏ nhất ít nhất $\lambda$.
 - Tại nghiệm, $W^\star = -\frac1\lambda X^\top(P - Y)$; vì mỗi hàng $P - Y$ có tổng bằng 0 nên
   $\sum_k w_k^\star = 0$: L2 tự chọn một nghiệm định danh.
@@ -113,7 +118,8 @@ Hệ quả khi $\lambda > 0$:
 ## 5. Chặn bước cho hạ gradient
 
 Nếu $\nabla^2 L \preceq M I$ thì gradient $M$-Lipschitz và bước $t \le 1/M$ luôn làm giảm hàm.
-Vì $s_i \le \tfrac14$ và trị riêng lớn nhất của $A_i$ không quá $\tfrac12$:
+Vì $s_i \le \tfrac14$ và trị riêng lớn nhất của $A_i$ không quá $\tfrac12$ (do
+$a^\top A_i a = \operatorname{Var}_{k\sim p_i}(a_k) \le \tfrac14(a_{\max} - a_{\min})^2 \le \tfrac12\|a\|^2$):
 $$
 M_{\text{nhị phân}} \le \tfrac14\|X\|_2^2 + \lambda, \qquad M_{\text{softmax}} \le \tfrac12\|X\|_2^2 + \lambda.
 $$
