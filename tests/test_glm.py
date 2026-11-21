@@ -157,6 +157,20 @@ def test_poisson_far_init_no_overflow():
     assert hist["grad_norm"][-1] < 1e-8
 
 
+@pytest.mark.parametrize("w0,b0", [(5.0, 10.0), (-5.0, -10.0), (-3.0, -5.0), (3.0, -5.0)])
+def test_poisson_far_init_full_step_always_descends(w0, b0):
+    """A3 mục 4: với 4 điểm khởi tạo xa, bước IRLS đầy đủ luôn giảm loss,
+    nên tắt giảm nửa bước (max_halving = 0) cho cùng kết quả."""
+    X, y = make_data("poisson")
+    kw = dict(w_init=np.full(3, w0), b_init=b0)
+    w1, b1, h1 = glm.fit_glm(X, y, "poisson", **kw)
+    w2, b2, h2 = glm.fit_glm(X, y, "poisson", max_halving=0, **kw)
+    assert h1["stop_reason"] == h2["stop_reason"] == "tol"
+    assert 10 <= len(h1["loss"]) - 1 <= 40
+    np.testing.assert_allclose(w1, w2)
+    assert b1 == b2
+
+
 def test_bernoulli_separable_no_nan():
     rng = np.random.default_rng(42)
     X = rng.normal(size=(40, 2))
@@ -188,6 +202,75 @@ def test_invalid_inputs():
         glm.fit_glm(X, [0, 1, 0], "gamma")
     with pytest.raises(ValueError):
         glm.fit_glm(np.zeros((2, 1)), [0, 1, 0], "bernoulli")
+
+
+@pytest.mark.parametrize("family", FAMILIES)
+def test_stop_reason_tol(family):
+    X, y = make_data(family)
+    _, _, hist = glm.fit_glm(X, y, family)
+    assert hist["stop_reason"] == "tol"
+    _, _, hist = glm.fit_glm(X, y, family, max_iter=1, tol=0.0)
+    assert hist["stop_reason"] == "max_iter" and len(hist["loss"]) == 2
+
+
+def test_no_descent_stops_and_keeps_previous_theta():
+    """Họ cố tình sai dấu phần dư → bước IRLS đi lên dốc; chia đôi không cứu được
+    nên fit_glm phải dừng ('no_descent'), giữ nghiệm cũ, loss không tăng."""
+    class WrongSign(glm.Gaussian):
+        def residual(self, y, eta):
+            return -(y - eta)
+
+    X, y = make_data("gaussian")
+    w0 = np.zeros(3)
+    w, b, hist = glm.fit_glm(X, y, WrongSign(), w_init=w0, b_init=0.0, max_halving=5)
+    assert hist["stop_reason"] == "no_descent"
+    assert len(hist["loss"]) == 1
+    np.testing.assert_array_equal(w, w0)
+    assert b == 0.0
+
+
+def test_custom_family_init_mean_without_editing_fit_glm():
+    """Họ mới chỉ cần khai báo lớp con; init_mean chặn ȳ vào miền của g."""
+    class LogGaussian(glm.Gaussian):            # liên kết log, y > 0 (không chính tắc)
+        name = "log_gaussian"
+
+        def inverse_link(self, eta):
+            return np.exp(np.minimum(eta, 700.0))
+
+        def link(self, mu):
+            return np.log(mu)
+
+        def dmu_deta(self, eta):
+            return self.inverse_link(eta)
+
+        def init_mean(self, y):
+            return max(float(np.mean(y)), 1e-3)
+
+        def irls_weights(self, eta):
+            return glm.Family.irls_weights(self, eta)
+
+        def residual(self, y, eta):
+            return y - self.inverse_link(eta)
+
+        def nll(self, y, eta):
+            return 0.5 * (y - self.inverse_link(eta)) ** 2
+
+    rng = np.random.default_rng(42)
+    X = rng.normal(size=(200, 2))
+    y = np.exp(X @ np.array([0.3, -0.2]) + 0.5) + 0.05 * rng.normal(size=200)
+    w, b, hist = glm.fit_glm(X, y, LogGaussian())
+    assert hist["stop_reason"] == "tol"
+    np.testing.assert_allclose(w, [0.3, -0.2], atol=0.05)
+    assert abs(b - 0.5) < 0.05
+
+
+@pytest.mark.parametrize("lam", [0.1, 1.0])
+def test_single_class_has_no_finite_minimizer_even_with_l2(lam):
+    """A1 mục 4: b không bị phạt nên khi chỉ có một lớp thì b → −∞ dù λ > 0."""
+    X, _ = make_data("bernoulli")
+    _, b, hist = glm.fit_glm(X, np.zeros(X.shape[0]), "bernoulli", lam=lam)
+    b_first = hist["b"][1]
+    assert b < -15 and b < b_first          # b chỉ dừng vì gradient đã < tol
 
 
 def test_custom_family_object():
