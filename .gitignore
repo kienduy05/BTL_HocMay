@@ -1,0 +1,37 @@
+# Môi trường ảo, cache
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.env
+
+# Hệ điều hành
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE, công cụ AI (cài đặt riêng từng máy)
+.vscode/
+.idea/
+.claude/settings.local.json
+CLAUDE.local.md
+
+# Dữ liệu: giữ thư mục, bỏ nội dung
+data/raw/*
+!data/raw/.gitkeep
+data/masked/*
+!data/masked/.gitkeep
+data/labeled/*
+!data/labeled/.gitkeep
+data/splits/*
+!data/splits/.gitkeep
+
+# Mô hình
+models/*
+!models/.gitkeep
+
+# Văn bản đồng ý đã ký
+consent/*
+!consent/.gitkeep
