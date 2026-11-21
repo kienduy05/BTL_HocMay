@@ -3,10 +3,13 @@
 ## Đã xong
 - [2026-11-20] README.md, RULES.md, AGENTS.md — Kiên
 - [2026-11-21] A2: core.py, logistic.py (IRLS), softmax.py (GD-Armijo, L-BFGS, SoftmaxRegression) + 36 test — Kiên
+- [2026-11-21] A2_doi_chieu.ipynb: E1–E5 → results/A2_*.csv, A2_*.png (5 seed, ~110 s) — Kiên
+
 
 
 ## Đang làm / bị chặn
--
+- D4: GD-Armijo trên TF-IDF chưa hội tụ trong 2000 vòng khi λ ≤ 1e-4 → tăng max_iter hoặc dùng warm_start khi quét λ
+
 
 ## Quyết định đã chốt
 - [2026-11-20] Mã hóa nhãn: lua_dao = 0, rac = 1, hop_le = 2 (core.LABELS)
@@ -23,6 +26,9 @@
 - [2026-11-21] Bổ sung mean ± std theo quy định đánh giá: CV 5 fold theo thời gian trong train
   (D4_cv.csv) + bootstrap 1.000 lần trên test (D5). Ảnh hưởng evaluate.py (Nhật)
   và D4_huan_luyen.ipynb (Kiên).
+- [2026-11-21] softmax.py thêm n_iter_, converged_, history['stop_reason'] và fit_path
+  (warm start, λ giảm dần). D4 quét λ bằng fit_path và ghi converged_ cho mọi mô hình.
+  Không đổi thuật toán, kết quả A2 giữ nguyên.
 
 ## Bước tiếp theo
 - Kiên: tạo repo, requirements.txt, .gitignore (kiểm tra data/raw/ bằng git status),

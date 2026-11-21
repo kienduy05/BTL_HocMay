@@ -236,3 +236,70 @@ def test_performance_sparse_no_dense(monkeypatch):
     _, _, res = sm.fit_lbfgs(X, y, K, lam=1e-3)
     assert abs(model.history_["loss"][-1] - res.fun) < 1e-6
     assert len(model.history_["step"]) < model.max_iter
+
+
+# ------------------------------------------------------------ theo dõi hội tụ, fit_path
+def test_converged_flags_small_data():
+    X, y = make_data()
+    model = sm.SoftmaxRegression(lam=1e-2).fit(X, y)
+    assert model.converged_ is True
+    assert model.history_["stop_reason"] in ("grad_tol", "rel_loss")
+    assert model.n_iter_ == len(model.history_["step"])
+
+
+def test_not_converged_max_iter_warns():
+    X, y = make_data()
+    with pytest.warns(RuntimeWarning, match="max_iter"):
+        model = sm.SoftmaxRegression(lam=1e-2, max_iter=5).fit(X, y)
+    assert model.converged_ is False
+    assert model.history_["stop_reason"] == "max_iter"
+    assert model.n_iter_ == 5
+
+
+def test_stop_reason_in_fit_gd_armijo():
+    X, y = make_data()
+    _, _, h = sm.fit_gd_armijo(X, y, K, lam=1e-2, tol=1e3)
+    assert h["stop_reason"] == "grad_tol" and len(h["step"]) == 0
+    _, _, h = sm.fit_gd_armijo(X, y, K, lam=1e-2, max_iter=3)
+    assert h["stop_reason"] == "max_iter"
+
+
+def test_lbfgs_sets_n_iter_and_converged():
+    X, y = make_data()
+    model = sm.SoftmaxRegression(lam=1e-2, solver="lbfgs", tol=1e-8).fit(X, y)
+    assert isinstance(model.n_iter_, int) and model.n_iter_ > 0
+    assert model.converged_ is True
+    assert model.n_iter_ == model.history_.nit
+
+
+LAMS_PATH = [1e-1, 1e-2, 1e-3]
+
+
+def test_fit_path_matches_separate_fits():
+    X, y = make_data()
+    path = sm.fit_path(X, y, LAMS_PATH, tol=1e-8, max_iter=20000)
+    for lam, model in zip(LAMS_PATH, path):
+        single = sm.SoftmaxRegression(lam=lam, tol=1e-8, max_iter=20000).fit(X, y)
+        assert model.converged_ and single.converged_
+        f_path = sm.loss_grad(model.W_, model.b_, X, y, lam)[0]
+        f_single = sm.loss_grad(single.W_, single.b_, X, y, lam)[0]
+        assert abs(f_path - f_single) < 1e-6
+
+
+def test_fit_path_fewer_total_iterations():
+    X, y = make_data()
+    path = sm.fit_path(X, y, LAMS_PATH, max_iter=20000)
+    singles = [sm.SoftmaxRegression(lam=lam, max_iter=20000).fit(X, y) for lam in LAMS_PATH]
+    assert sum(m.n_iter_ for m in path) < sum(m.n_iter_ for m in singles)
+
+
+def test_fit_path_keeps_input_order():
+    X, y = make_data()
+    lams = [1e-3, 1e-1, 1e-2]
+    path = sm.fit_path(X, y, lams, max_iter=20000)
+    assert len(path) == 3
+    for lam, model in zip(lams, path):
+        assert model.lam == lam
+        assert model.W_.shape == (X.shape[1], K)
+        single = sm.SoftmaxRegression(lam=lam, max_iter=20000).fit(X, y)
+        np.testing.assert_allclose(model.predict_proba(X), single.predict_proba(X), atol=1e-4)
