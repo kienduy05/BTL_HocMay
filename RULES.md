@@ -6,6 +6,11 @@
 - Nhãn nhị phân: {0, 1} trong code; {−1, +1} chỉ dùng trong chứng minh B2.
 - Ma trận chi phí C[thật, đoán], cùng thứ tự LABELS.
 - Seed = 42 cho mọi bước có yếu tố ngẫu nhiên.
+- Loss = TRUNG BÌNH log-loss trên n mẫu (có trọng số thì là trung bình có trọng số)
+  + (λ/2)‖W‖². Hệ số chặn b KHÔNG bị phạt.
+- Nhãn đưa vào hàm là mảng số nguyên (n,); one-hot chỉ tạo bên trong.
+- Temperature scaling (A4) nhận đầu vào là logit có shape (n, K),
+  lấy từ SoftmaxRegression.decision_function.
 
 Cột file raw data/raw/<tên>_<ngày>.csv:
 - text: nội dung tin gốc

@@ -2,6 +2,8 @@
 
 ## Đã xong
 - [2026-11-20] README.md, RULES.md, AGENTS.md — Kiên
+- [2026-11-21] A2: core.py, logistic.py (IRLS), softmax.py (GD-Armijo, L-BFGS, SoftmaxRegression) + 36 test — Kiên
+
 
 ## Đang làm / bị chặn
 -
@@ -14,6 +16,10 @@
   phần A tự cài bằng NumPy
 - [2026-11-20] Tin gốc gửi trực tiếp cho Kiên; chỉ Kiên giữ data/raw/ và chạy mask.py;
   messages_masked.csv đưa lên Drive; xóa raw sau rà soát
+- [2026-11-21] Loss = TRUNG BÌNH log-loss trên n mẫu (có trọng số: trung bình có trọng số)
+  + (λ/2)‖W‖²; hệ số chặn b không bị phạt. Đối chiếu sklearn: C = 1/(n·λ), λ = 0 ↔ C = inf
+- [2026-11-21] Nhãn đưa vào hàm là mảng số nguyên (n,); one-hot chỉ tạo bên trong
+- [2026-11-21] Temperature scaling (A4) nhận logit (n, K) từ SoftmaxRegression.decision_function
 
 ## Bước tiếp theo
 - Kiên: tạo repo, requirements.txt, .gitignore (kiểm tra data/raw/ bằng git status),
