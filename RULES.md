@@ -47,6 +47,9 @@ def ece(probs, labels, n_bins=15, kind="top_label") -> float:
 - test.csv chỉ được đọc trong D5_danh_gia.ipynb.
 - Xử lý biến thể chính tả bằng quy tắc và từ điển cố định, không học từ dữ liệu.
 - Thẻ đặc trưng thống nhất: [LINK], [TIỀN], [SĐT], khớp với thẻ của mask.py.
+- Kiểm định chéo theo thời gian: 5 fold, cửa sổ mở rộng, chỉ trong train.
+- Bootstrap trên test: 1.000 lần, seed 42, chỉ lấy mẫu lại dự đoán đã có;
+  không huấn luyện lại, không chọn lại ngưỡng hay bộ hiệu chuẩn.
 
 ## Quyền riêng tư
 - Không viết code truy cập URL trong tin nhắn.

@@ -14,6 +14,9 @@
   phần A tự cài bằng NumPy
 - [2026-11-20] Tin gốc gửi trực tiếp cho Kiên; chỉ Kiên giữ data/raw/ và chạy mask.py;
   messages_masked.csv đưa lên Drive; xóa raw sau rà soát
+- [2026-11-21] Bổ sung mean ± std theo quy định đánh giá: CV 5 fold theo thời gian trong train
+  (D4_cv.csv) + bootstrap 1.000 lần trên test (D5). Ảnh hưởng evaluate.py (Nhật)
+  và D4_huan_luyen.ipynb (Kiên).
 
 ## Bước tiếp theo
 - Kiên: tạo repo, requirements.txt, .gitignore (kiểm tra data/raw/ bằng git status),

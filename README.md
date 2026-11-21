@@ -141,7 +141,9 @@ de-tai-2/
 │   ├── C5_roc_pr.png                # [C5] ROC và PR theo tỷ lệ lớp
 │   ├── D1_thong_ke.csv              # [D1] phân bố lớp × nguồn × tập dữ liệu
 │   ├── D2_kappa.txt                 # [D2] Cohen's κ (vòng thử + chính thức)
-│   ├── D5_metrics.csv               # [D5] F1 macro, recall lừa đảo @FPR, ECE, log-loss của 3 mô hình
+│   ├── D4_cv.csv                    # [D4] mean ± std của F1 macro, log-loss qua 5 fold theo thời gian trong train
+│   ├── D5_metrics.csv               # [D5] F1 macro, recall lừa đảo @FPR, ECE, log-loss của 3 mô hình:
+│   │                                #      giá trị gốc + mean ± std + khoảng tin cậy 95% (bootstrap 1.000 lần)
 │   ├── D5_confusion_matrix.png      # [D5] ma trận nhầm lẫn
 │   ├── D5_reliability.png           # [D5] biểu đồ độ tin cậy trước/sau hiệu chuẩn
 │   ├── D5_drift.csv                 # [D5] so sánh kết quả val_b và test
@@ -191,12 +193,13 @@ D4a Chia theo thời gian: train 70% | val_a 7,5% | val_b 7,5% | test 15%
 D3b TF-IDF n-gram từ + n-gram ký tự: chỉ học trên train, rồi áp sang val/test
  ↓
 D4b Huấn luyện softmax (A2), Naive Bayes, SVM — siêu tham số chọn bằng kiểm định chéo
-    theo thời gian TRONG train
+    5 fold theo thời gian TRONG train; báo cáo mean ± std qua 5 fold (D4_cv.csv)
     Hiệu chuẩn: fit Platt / PAVA / temperature trên val_a; chọn bộ tốt nhất trên val_b
     (SVM bắt buộc qua hiệu chuẩn mới có xác suất)
     Quyết định: ma trận chi phí 3×3; ngưỡng tại FPR cố định chốt trên val_b
  ↓
 D5 Đánh giá trên tập test (chỉ chạy MỘT lần cuối)
+   + bootstrap 1.000 lần trên dự đoán đã có để lấy mean ± std và khoảng tin cậy 95%
 ```
 
 ## 7. Đặc tả từng bước phần D
@@ -225,17 +228,20 @@ D5 Đánh giá trên tập test (chỉ chạy MỘT lần cuối)
 
 ### D4 – Mô hình hóa
 - Ba mô hình: softmax tự viết (A2, có L2), Naive Bayes đa thức, SVM tuyến tính.
+- Kiểm định chéo theo thời gian: chia train thành 6 khối liên tiếp theo date; fold k huấn luyện trên khối 1..k, đánh giá trên khối k+1 (k = 1..5). Chọn siêu tham số theo log-loss trung bình; với siêu tham số đã chọn, ghi mean ± std của F1 macro và log-loss qua 5 fold vào `results/D4_cv.csv`.
 - Hiệu chuẩn: thử cả ba phương pháp của A4 cho từng mô hình; tiêu chí chọn là log-loss/ECE trên val_b.
 - Ma trận chi phí 3×3 `C[lớp thật, lớp đoán]` do nhóm đề xuất, biện luận trong `ma_tran_chi_phi.md` (ví dụ: bỏ lọt tin lừa đảo đắt nhất; chặn nhầm tin hợp lệ đắt hơn để lọt tin rác). Quy tắc quyết định: chọn lớp có chi phí kỳ vọng `Σᵢ C[i, j]·p(i|x)` nhỏ nhất; B5 là trường hợp riêng 2 lớp.
 - Ghi vào `threshold.json`: ma trận chi phí, ngưỡng điểm lừa đảo tương ứng FPR = 1% trên val_b, tỷ lệ lớp π của train.
 
 ### D5 – Đánh giá
 - Tập test là 15% tin mới nhất. So sánh kết quả val_b với test để đo trôi khái niệm (`D5_drift.csv`).
+- Độ bất định: bootstrap 1.000 lần (seed 42) trên tập test, lấy mẫu lại theo tin nhắn từ các dự đoán đã có; **KHÔNG** huấn luyện lại, **KHÔNG** chọn lại ngưỡng. Mỗi chỉ số báo giá trị gốc, mean ± std và khoảng tin cậy 95% (phân vị 2,5–97,5).
+- So sánh hai mô hình: bootstrap ghép cặp (cùng chỉ số lấy mẫu cho cả hai), báo khoảng tin cậy của hiệu số; chỉ kết luận mô hình tốt hơn khi khoảng không chứa 0.
 - Chỉ số cho cả 3 mô hình, trước và sau hiệu chuẩn:
   - F1 macro (theo quy tắc chi phí tối thiểu);
   - recall lớp lừa đảo tại **FPR = 1%** (lừa đảo so với phần còn lại; FPR = tỷ lệ tin không lừa đảo bị báo là lừa đảo), dùng ngưỡng chốt trên val_b, báo cả FPR thực tế đạt được trên test;
   - ECE top-label (M = 15) và ECE riêng lớp lừa đảo; log-loss.
-- Điều chỉnh tỷ lệ lớp (B6, dạng đa lớp): `p′(y|x) ∝ p(y|x)·π′ᵧ/πᵧ`. Kịch bản: tin lừa đảo chiếm 5% và 1% lúc triển khai; mô phỏng bằng lấy mẫu lại tập test theo π′ nhiều lần; so sánh ECE, log-loss, chi phí kỳ vọng trước/sau điều chỉnh.
+- Điều chỉnh tỷ lệ lớp (B6, dạng đa lớp): `p′(y|x) ∝ p(y|x)·π′ᵧ/πᵧ`. Kịch bản: tin lừa đảo chiếm 5% và 1% lúc triển khai; mô phỏng bằng lấy mẫu lại tập test theo π′ 1.000 lần (seed 42); báo mean ± std của ECE, log-loss, chi phí kỳ vọng trước/sau điều chỉnh.
 - Đặc trưng có trọng số lớn: trọng số softmax, hệ số SVM, tỷ số log-xác suất của Naive Bayes, cho cả n-gram từ và ký tự.
 - Phân tích lỗi: nhóm các lỗi điển hình (lừa đảo giả dạng ngân hàng, rác bị nhầm lừa đảo…), báo cáo theo lớp × nguồn.
 
@@ -267,8 +273,8 @@ Chạy `notebooks/C1` → `C5`. Các notebook độc lập, chạy cái nào tr�
 | 6 | `notebooks/D2_cohen_kappa.ipynb` (phần κ) | 2 file nhãn → `results/D2_kappa.txt`; sau phân xử → `labels_final.csv` |
 | 7 | `python src/preprocess.py` | `messages_masked.csv` + `labels_final.csv` → `data/labeled/clean.csv` |
 | 8 | `python src/split.py` | `clean.csv` → `train.csv`, `val_a.csv`, `val_b.csv`, `test.csv` |
-| 9 | `notebooks/D4_huan_luyen.ipynb` | `train.csv`, `val_a.csv`, `val_b.csv` → toàn bộ file trong `models/` |
-| 10 | `notebooks/D5_danh_gia.ipynb` | `models/` + `val_b.csv` + `test.csv` → các file `results/D5_*` |
+| 9 | `notebooks/D4_huan_luyen.ipynb` | `train.csv`, `val_a.csv`, `val_b.csv` → toàn bộ file trong `models/` + `results/D4_cv.csv` |
+| 10 | `notebooks/D5_danh_gia.ipynb` | `models/` + `val_b.csv` + `test.csv` → các file `results/D5_*` (kèm mean ± std, KTC 95%) |
 
 ## 9. Quy tắc bắt buộc
 
@@ -300,7 +306,7 @@ Chạy `notebooks/C1` → `C5`. Các notebook độc lập, chạy cái nào tr�
 - [ ] C1, C3
 - [ ] D1: `mask.py` + `test_mask.py`, `mau_dong_y.md`, giữ văn bản đồng ý, thu thập, nhận file raw và chạy `mask.py`, rà soát lô của Nhật, `D1_thong_ke.ipynb`
 - [ ] D2: phân xử các tin lệch nhãn + `quy_trinh_phan_xu.md`
-- [ ] D4: `split.py` + `test_split.py`, huấn luyện, hiệu chuẩn, `ma_tran_chi_phi.md`, chọn ngưỡng → `models/`
+- [ ] D4: `split.py` + `test_split.py`, huấn luyện, kiểm định chéo 5 fold theo thời gian → `D4_cv.csv`, hiệu chuẩn, `ma_tran_chi_phi.md`, chọn ngưỡng → `models/`
 - [ ] Cập nhật `PROGRESS.md` mỗi khi gộp PR
 - [ ] Viết phần mình + ghép báo cáo
 
@@ -321,5 +327,5 @@ Chạy `notebooks/C1` → `C5`. Các notebook độc lập, chạy cái nào tr�
 - [ ] D1: thu thập, rà soát lô của Đức
 - [ ] D2: chọn mẫu 20%, gán vòng thử + gán chéo, tính Cohen's κ
 - [ ] D4: duyệt `ma_tran_chi_phi.md`
-- [ ] D5: `evaluate.py` + `test_evaluate.py`, đánh giá, điều chỉnh tỷ lệ lớp (B6), phân tích đặc trưng và lỗi
+- [ ] D5: `evaluate.py` + `test_evaluate.py`, đánh giá, bootstrap mean ± std + KTC 95%, bootstrap ghép cặp so sánh mô hình, điều chỉnh tỷ lệ lớp (B6), phân tích đặc trưng và lỗi
 - [ ] Viết phần báo cáo
