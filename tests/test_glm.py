@@ -91,6 +91,46 @@ def test_matches_statsmodels(family):
     np.testing.assert_allclose(glm.predict(X, w, b, family), ref.fittedvalues, atol=1e-6)
 
 
+@pytest.mark.parametrize("family", FAMILIES)
+def test_b3_newton_step_equals_weighted_least_squares(family):
+    """B3(b): với liên kết chính tắc, bước Newton β + (X̃ᵀWX̃)⁻¹X̃ᵀ(y − μ)
+    trùng bước bình phương tối thiểu có trọng số W = V(μ), z = η + (y − μ)/V(μ)."""
+    X, y = make_data(family)
+    Xa = np.c_[X, np.ones(len(y))]
+    beta = np.array([0.1, -0.2, 0.3, 0.05])
+    fam = glm.get_family(family)
+    eta = Xa @ beta
+    mu = fam.inverse_link(eta)
+    V = fam.variance(mu)
+    newton = beta + np.linalg.solve(Xa.T @ (V[:, None] * Xa), Xa.T @ (y - mu))
+    z = eta + (y - mu) / V
+    sw = np.sqrt(V)
+    wls = np.linalg.lstsq(sw[:, None] * Xa, sw * z, rcond=None)[0]
+    np.testing.assert_allclose(newton, wls, atol=1e-12)
+    # và trùng một vòng của fit_glm (λ = 0)
+    _, _, hist = glm.fit_glm(X, y, family, w_init=beta[:3], b_init=beta[3], max_iter=1)
+    np.testing.assert_allclose(np.r_[hist["w"][1], hist["b"][1]], newton, atol=1e-12)
+
+
+@pytest.mark.parametrize("family,theta,phi", [("bernoulli", 0.7, 1.0),
+                                              ("poisson", 0.7, 1.0),
+                                              ("gaussian", 0.7, 2.0)])
+def test_b3_moments_match_b_derivatives(family, theta, phi):
+    """B3(a): E[Y] = b'(θ), Var(Y) = φ b''(θ), kiểm bằng mô phỏng 10⁶ mẫu."""
+    rng = np.random.default_rng(42)
+    fam = glm.get_family(family)
+    mean = fam.inverse_link(np.array([theta]))[0]                 # b'(θ)
+    var = phi * fam.variance(np.array([mean]))[0]                 # φ b''(θ)
+    if family == "bernoulli":
+        y = (rng.random(10**6) < mean).astype(float)
+    elif family == "poisson":
+        y = rng.poisson(mean, 10**6).astype(float)
+    else:
+        y = rng.normal(mean, np.sqrt(phi), 10**6)
+    assert abs(y.mean() - mean) < 5e-3
+    assert abs(y.var() - var) < 1e-2 * max(var, 1.0)
+
+
 def test_gaussian_matches_least_squares_one_step():
     X, y = make_data("gaussian")
     w, b, hist = glm.fit_glm(X, y, "gaussian")
