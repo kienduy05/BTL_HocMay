@@ -11,6 +11,18 @@
 - Nhãn đưa vào hàm là mảng số nguyên (n,); one-hot chỉ tạo bên trong.
 - Temperature scaling (A4) nhận đầu vào là logit có shape (n, K),
   lấy từ SoftmaxRegression.decision_function.
+- Hiệu chuẩn (A4, calibration.py): mọi bộ hiệu chuẩn nhận "điểm" scores (n, K) và trả
+  xác suất (n, K), mỗi hàng tổng = 1. Điểm: softmax → SoftmaxRegression.decision_function;
+  Naive Bayes → predict_log_proba; SVM tuyến tính → decision_function.
+  Bộ hiệu chuẩn chỉ fit trên val_a; chọn bộ tốt nhất (log-loss, ECE) trên val_b.
+  K lấy từ tham số n_classes, KHÔNG suy ra từ y (val_a có thể thiếu lớp).
+  Platt và PAVA đa lớp: one-vs-rest theo từng cột, kẹp vào [1e-6, 1 − 1e-6], rồi chuẩn hóa hàng.
+- ECE (calibration_metrics.py): M = 15 bin đều trên [0, 1]; bin m = ((m−1)/M, m/M],
+  riêng bin 1 gồm cả 0; bin rỗng bị bỏ qua (đóng góp 0).
+  kind="binary": conf = p (xác suất lớp dương), acc = tỷ lệ y = 1 trong bin.
+  kind="top_label": conf = max_k p_k, acc = tỷ lệ argmax đúng.
+  kind="classwise": trung bình theo K lớp của ECE binary trên cột k với nhãn (y == k).
+  "ECE riêng lớp lừa đảo" ở D5 = ece(probs[:, 0], labels == 0, kind="binary").
 
 Cột file raw data/raw/<tên>_<ngày>.csv:
 - text: nội dung tin gốc
