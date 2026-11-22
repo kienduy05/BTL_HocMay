@@ -104,9 +104,9 @@ de-tai-2/
 │   ├── quy_trinh_phan_xu.md         # [D2] quy trình phân xử tin lệch nhãn (Kiên)
 │   └── ma_tran_chi_phi.md           # [D4] ma trận chi phí 3×3 + biện luận (Kiên, Nhật duyệt)
 │
-├── consent/                         # KHÔNG đẩy lên Git — văn bản đồng ý đã ký, chỉ Kiên giữ
+├── consent/                         # ĐÃ XÓA (2026-11-22); .gitignore vẫn chặn, không bao giờ lên Git
 │
-├── data/                            # KHÔNG đẩy lên Git
+├── data/                            # dữ liệu đã che ĐƯỢC đẩy lên Git; data/raw/ đã xóa và bị .gitignore chặn
 │   ├── raw/                         # [D1] tin gốc CHƯA che, mỗi lô một file — chỉ trên máy Kiên
 │   │   └── <tên>_<ngày>.csv         #      cột: text, date, source_type, source_ref (xem RULES.md)
 │   │                                #      xóa sau khi lô đã che + rà soát xong
@@ -124,7 +124,7 @@ de-tai-2/
 │       ├── val_b.csv                # [D4] 7,5% tiếp theo — chọn bộ hiệu chuẩn, chọn ngưỡng
 │       └── test.csv                 # [D4] 15% mới nhất
 │
-├── models/                          # [D4] KHÔNG đẩy lên Git — D5 đọc lại từ đây
+├── models/                          # [D4] đẩy lên Git — D5 đọc lại từ đây
 │   ├── tfidf_word.pkl               # TF-IDF n-gram từ (học trên train)
 │   ├── tfidf_char.pkl               # TF-IDF n-gram ký tự (học trên train)
 │   ├── softmax.npz                  # trọng số W, b của softmax tự viết (A2)
