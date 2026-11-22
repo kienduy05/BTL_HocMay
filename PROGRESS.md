@@ -5,6 +5,9 @@
 - [2026-11-21] A2: core.py, logistic.py (IRLS), softmax.py (GD-Armijo, L-BFGS, SoftmaxRegression) + 36 test — Kiên
 - [2026-11-21] A2_doi_chieu.ipynb: E1–E5 → results/A2_*.csv, A2_*.png (5 seed, ~110 s) — Kiên
 - [2026-11-21] C1_newton_tay.ipynb, C3_kha_tach.ipynb — Kiên
+- [2026-11-22] D3a: preprocess.py (clean, near_dup_groups, fit_tfidf/transform_tfidf) + test; clean.csv 2.872 tin (lua_dao 814 / rac 1.097 / hop_le 961), chỉ xóa 140 tin trùng hẳn — Đức
+- [2026-11-22] Che tay tên thật / tài khoản FTTH / biển số / mật khẩu còn sót (38 chỗ, log: data/labeled/sua_tay_log.csv); sửa nhãn COM_618, COM_748, COM_2266, SYN_177 → rac cho thống nhất với tin gần trùng — Đức
+- [2026-11-22] Rà soát nhãn bằng bộ phân loại kiểm định chéo + đọc lại 166 tin bất đồng: sửa 67 nhãn (31 hop_le→rac, 19 rac→hop_le, 17 →lua_dao), log theo id trong sua_tay_log.csv; D2: docs/huong_dan_gan_nhan.md + report/A1_A3_B3_B4_D2_D3.docx — Đức
 
 
 
@@ -38,6 +41,11 @@
 - [2026-11-22] ECE: 15 bin đều, bin m = ((m−1)/M, m/M], bin 1 gồm cả 0, bin rỗng bỏ qua;
   kind binary / top_label / classwise (trung bình ECE binary theo lớp);
   ECE lớp lừa đảo = ece(probs[:, 0], labels == 0, kind="binary").
+
+- [2026-11-22] D3: chỉ xóa trùng hẳn; tin gần trùng (Jaccard 5-gram ≥ 0,8) GIỮ, gán cột nhom_gan_trung — split.py xếp cả nhóm vào cùng một tập (gán nhóm theo date của tin sớm nhất).
+- [2026-11-22] Thẻ: [MONEY] → [TIỀN], link → [LINK], [SĐT] chỉ cho số sót; thêm [LINK_LẠ], [KÝ_TỰ_LẠ].
+- [2026-11-22] 495 tin SYN không có date: chỉ đưa vào train (khối 1 của CV), val_a/val_b/test chỉ gồm tin thật có date. Mục tiêu README đã sửa thành ≥ 2.800 tin sau lọc. split.py (Kiên) cần làm theo quy tắc này.
+- [2026-11-22] Chữ ký D3: clean(df, threshold=None, group_threshold=0.8) → (clean_df, removed_df, stats); fit_tfidf(train) → (vec_word, vec_char); transform_tfidf(vec_word, vec_char, df) → csr (n, d)
 
 ## Bước tiếp theo
 - Kiên: tạo repo, requirements.txt, .gitignore (kiểm tra data/raw/ bằng git status),

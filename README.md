@@ -61,7 +61,7 @@ de-tai-2/
 │   ├── mask.py                 # [D1] đọc file trong data/raw/, che SĐT, số tài khoản, họ tên, mã giao dịch,
 │   │                           #      thêm dòng vào data/masked/messages_masked.csv                 (Kiên)
 │   ├── preprocess.py           # [D3] clean(): NFC, chuẩn hóa dấu thanh, viết tắt, biến thể cố ý,
-│   │                           #      thay thẻ, tách từ, loại trùng và gần trùng (chạy TRƯỚC khi chia)
+│   │                           #      thay thẻ, tách từ, xóa trùng hẳn + gom nhóm gần trùng (chạy TRƯỚC khi chia)
 │   │                           #      fit_tfidf(): TF-IDF n-gram từ + ký tự, chỉ học trên train   (Đức)
 │   ├── split.py                # [D4] chia theo thời gian 70/15/15, tập val tách đôi val_a/val_b    (Kiên)
 │   └── evaluate.py             # [D5] F1 macro, recall lừa đảo tại FPR cố định, quyết định theo chi phí,
@@ -178,7 +178,7 @@ Mỗi thư mục có sẵn một file rỗng `.gitkeep` để Git giữ lại th
 ## 6. Quy trình phần D (theo thứ tự)
 
 ```
-D1 Thu thập (mục tiêu 3.500–4.000 tin để sau lọc còn ≥ 3.000, đủ 3 lớp)
+D1 Thu thập (mục tiêu 3.000–4.000 tin để sau lọc còn ≥ 2.800, đủ 3 lớp)
    → gửi file lô cho Kiên → Kiên lưu vào data/raw/ → che bằng mask.py
    → đưa messages_masked.csv lên Drive → rà soát thủ công → Kiên xóa file raw
  ↓
@@ -186,9 +186,10 @@ D2 Vòng thử: Đức + Nhật cùng gán 100 tin → tính κ → sửa hướ
    Vòng chính: Đức gán toàn bộ; Nhật gán độc lập 20% (ngẫu nhiên phân tầng); tính κ; Kiên phân xử
  ↓
 D3a Làm sạch: NFC, dấu thanh, viết tắt, biến thể cố ý, thẻ [LINK]/[TIỀN]/[SĐT], tách từ,
-    loại trùng và gần trùng (giữ bản cũ nhất)
+    xóa trùng hẳn (giữ bản cũ nhất), gom tin gần trùng thành nhóm (cột nhom_gan_trung)
  ↓
-D4a Chia theo thời gian: train 70% | val_a 7,5% | val_b 7,5% | test 15%
+D4a Chia theo thời gian (chỉ tin có date): train 70% | val_a 7,5% | val_b 7,5% | test 15%
+    cả nhóm gần trùng vào cùng một tập; tin không có date (SYN) chỉ vào train
  ↓
 D3b TF-IDF n-gram từ + n-gram ký tự: chỉ học trên train, rồi áp sang val/test
  ↓
@@ -206,7 +207,7 @@ D5 Đánh giá trên tập test (chỉ chạy MỘT lần cuối)
 
 ### D1 – Thu thập và che thông tin
 - Nguồn: bản tin cảnh báo công khai của cơ quan chức năng, báo chí, tin do tình nguyện viên đóng góp **có văn bản đồng ý** (theo `docs/mau_dong_y.md`, bản đã ký lưu ở `consent/`).
-- Mục tiêu 3.500–4.000 tin, vì bước loại trùng và gần trùng ở D3 sẽ làm giảm số lượng; sau lọc phải còn ≥ 3.000 tin và đủ cả 3 lớp.
+- Mục tiêu 3.000–4.000 tin, vì bước xóa trùng ở D3 sẽ làm giảm số lượng; sau lọc phải còn ≥ 2.800 tin và đủ cả 3 lớp.
 - Người thu thập nhập tin vào `<tên>_<ngày>.csv` theo đúng các cột trong `RULES.md` (mục "Quy ước dữ liệu"), gửi trực tiếp cho Kiên (chuyển file 1–1, không qua nhóm chat, không qua công cụ AI), rồi xóa bản trên máy mình. Kiên là người duy nhất giữ `data/raw/` và chạy `mask.py`.
 - Kiên chạy `mask.py` để che SĐT, số tài khoản/số thẻ, họ tên, mã giao dịch/OTP; kết quả được thêm vào `messages_masked.csv` với `reviewed = 0`, rồi Kiên đưa bản mới lên Drive.
 - Rà soát thủ công trên bản đã che ở Drive: người thu thập không tự rà soát lô của mình (Kiên ↔ Nhật ↔ Đức xoay vòng). Phát hiện sót thì che tay, đặt `reviewed = 1`, và bổ sung mẫu vào `test_mask.py`. Rà soát xong thì Kiên **xóa file raw** của lô đó.
@@ -224,9 +225,11 @@ D5 Đánh giá trên tập test (chỉ chạy MỘT lần cuối)
 - Biến thể chính tả cố ý: ký tự chèn giữa chữ (*n.g.â.n h.à.n.g*), chữ số thay chữ (*V1etc0mbank*), teencode, viết không dấu — xử lý bằng quy tắc và từ điển cố định (không học từ dữ liệu).
 - Thẻ đặc trưng: `[LINK]`, `[TIỀN]`, `[SĐT]`, thống nhất với thẻ do `mask.py` sinh ra.
 - Tách từ (pyvi hoặc underthesea) cho n-gram từ; n-gram ký tự chạy trên văn bản chưa tách.
-- Loại trùng tuyệt đối và gần trùng (ví dụ Jaccard trên n-gram ký tự), giữ tin có `date` sớm nhất.
+- Xóa tin trùng hẳn (giống hệt sau chuẩn hóa), giữ tin có `date` sớm nhất. Tin gần trùng (Jaccard 5-gram ký tự ≥ 0,8) không xóa mà gán chung mã `nhom_gan_trung`.
+- Thẻ: giữ thẻ của `mask.py`, đổi `[MONEY]` → `[TIỀN]`, link → `[LINK]`; `[SĐT]` cho số điện thoại sót lại; thêm cờ `[LINK_LẠ]`, `[KÝ_TỰ_LẠ]`.
 
 ### D4 – Mô hình hóa
+- Chia dữ liệu (D4a): chỉ tin có `date` được chia theo thời gian 70 / 7,5 / 7,5 / 15; mỗi nhóm `nhom_gan_trung` đi trọn vào một tập, xếp theo `date` của tin sớm nhất trong nhóm. Tin không có `date` (nguồn tổng hợp, SYN) chỉ vào train và thuộc khối 1 của kiểm định chéo, nên val_a, val_b, test chỉ gồm tin thật.
 - Ba mô hình: softmax tự viết (A2, có L2), Naive Bayes đa thức, SVM tuyến tính.
 - Kiểm định chéo theo thời gian: chia train thành 6 khối liên tiếp theo date; fold k huấn luyện trên khối 1..k, đánh giá trên khối k+1 (k = 1..5). Chọn siêu tham số theo log-loss trung bình; với siêu tham số đã chọn, ghi mean ± std của F1 macro và log-loss qua 5 fold vào `results/D4_cv.csv`.
 - Hiệu chuẩn: thử cả ba phương pháp của A4 cho từng mô hình; tiêu chí chọn là log-loss/ECE trên val_b.
