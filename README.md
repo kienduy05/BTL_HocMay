@@ -48,7 +48,7 @@ de-tai-2/
 ├── CLAUDE.md            # chỉ dẫn cho Claude Code: tự nạp RULES.md, PROGRESS.md;
 │                        # bảng chỉ mục việc → mục README cần đọc                                    (Kiên)
 ├── requirements.txt     # thư viện + phiên bản, cả nhóm cài giống nhau (có pyvi hoặc underthesea)  (Kiên)
-├── .gitignore           # bỏ qua .venv/ và nội dung data/, models/, consent/ (giữ thư mục qua .gitkeep)  (Kiên)
+├── .gitignore           # bỏ qua .venv/, data/raw/, consent/  (Kiên)
 │
 ├── src/
 │   ├── core.py                 # [A2] hằng số LABELS, sigmoid ổn định, log-sum-exp (dùng chung cho mọi file)  (Kiên)
@@ -155,7 +155,7 @@ de-tai-2/
     └── bao_cao.pdf                  # báo cáo cuối (Kiên ghép)
 ```
 
-Mỗi thư mục có sẵn một file rỗng `.gitkeep` để Git giữ lại thư mục khi còn trống. Với `data/`, `models/`, `consent/`, Git chỉ lưu `.gitkeep`, mọi file khác bên trong đều bị `.gitignore` bỏ qua.
+Mỗi thư mục có sẵn một file rỗng `.gitkeep` để Git giữ lại thư mục khi còn trống. Từ 2026-11-22, dữ liệu đã che trong `data/` và `models/` được lưu trên Git; chỉ `data/raw/` và `consent/` bị `.gitignore` chặn.
 
 ## 4. Quy ước chung
 
@@ -282,7 +282,7 @@ Chạy `notebooks/C1` → `C5`. Các notebook độc lập, chạy cái nào tr�
 ## 9. Quy tắc bắt buộc
 
 - **Tin chưa che chỉ nằm trong `data/raw/` trên máy Kiên.** Người thu thập gửi trực tiếp cho Kiên rồi xóa bản của mình; không đẩy lên Git, không đưa lên Drive, không dán vào công cụ AI (kể cả để Claude Code mở file); Kiên xóa sau khi lô đã che và rà soát xong.
-- **Không đẩy nội dung `data/`, `models/`, `consent/` lên Git** (chỉ `.gitkeep`). Dữ liệu dùng chung qua thư mục Drive riêng của nhóm; `data/raw/` và `consent/` không bao giờ đưa lên Drive.
+- **Dữ liệu đã che (`data/masked/`, `data/labeled/`, `data/splits/`) và `models/` được đẩy lên Git** (quyết định 2026-11-22). `data/raw/` và `consent/` đã xóa; `.gitignore` vẫn chặn hai thư mục này, tin chưa che và văn bản đồng ý không bao giờ lên Git hay Drive.
 - **Không truy cập đường dẫn trong tin nhắn.**
 - **Chỉ chia dữ liệu một lần.** Cả nhóm dùng chung `data/splits/`, không ai tự chia lại.
 - **Tập test chỉ dùng ở bước cuối.** Siêu tham số chọn trong train; hiệu chuẩn fit trên val_a; chọn bộ hiệu chuẩn và ngưỡng trên val_b.
