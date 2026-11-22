@@ -1,0 +1,57 @@
+{
+  "labels": [
+    "lua_dao",
+    "rac",
+    "hop_le"
+  ],
+  "cost_matrix": [
+    [
+      0.0,
+      5.0,
+      10.0
+    ],
+    [
+      1.0,
+      0.0,
+      1.0
+    ],
+    [
+      5.0,
+      3.0,
+      0.0
+    ]
+  ],
+  "cost_matrix_note": "C[lớp thật, lớp đoán], thứ tự labels; xem docs/ma_tran_chi_phi.md",
+  "fpr_muc_tieu": 0.01,
+  "diem": "p(lua_dao | x) sau hiệu chuẩn; báo lừa đảo khi điểm >= threshold",
+  "n_lua_dao_val_b": 43,
+  "n_khong_lua_dao_val_b": 129,
+  "pi_train": [
+    0.2865740740740741,
+    0.37916666666666665,
+    0.33425925925925926
+  ],
+  "models": {
+    "softmax": {
+      "calibrator": "temperature",
+      "threshold": 0.7076425458887482,
+      "fpr_val_b": 0.007751937984496124,
+      "recall_lua_dao_val_b": 0.7906976744186046,
+      "so_bao_nham_val_b": 1
+    },
+    "naive_bayes": {
+      "calibrator": "none",
+      "threshold": 0.9038263562879011,
+      "fpr_val_b": 0.007751937984496124,
+      "recall_lua_dao_val_b": 0.18604651162790697,
+      "so_bao_nham_val_b": 1
+    },
+    "svm": {
+      "calibrator": "temperature",
+      "threshold": 0.6597216018333596,
+      "fpr_val_b": 0.007751937984496124,
+      "recall_lua_dao_val_b": 0.8604651162790697,
+      "so_bao_nham_val_b": 1
+    }
+  }
+}

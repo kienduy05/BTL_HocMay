@@ -18,21 +18,8 @@ desktop.ini
 .claude/settings.local.json
 CLAUDE.local.md
 
-# Dữ liệu: giữ thư mục, bỏ nội dung
-data/raw/*
-!data/raw/.gitkeep
-data/masked/*
-!data/masked/.gitkeep
-data/labeled/*
-!data/labeled/.gitkeep
-data/splits/*
-!data/splits/.gitkeep
-
-# Mô hình
-models/*
-!models/.gitkeep
-
-# Văn bản đồng ý đã ký
-consent/*
-!consent/.gitkeep
+# Dữ liệu đã che (data/masked, labeled, splits) và models/ ĐƯỢC đẩy lên Git (quyết định 2026-11-22).
+# Tin chưa che và văn bản đồng ý không bao giờ lên Git (thư mục đã xóa; chặn phòng khi tạo lại)
+data/raw/
+consent/
 .venv*/
