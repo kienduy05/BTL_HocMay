@@ -30,6 +30,14 @@
 - [2026-11-21] softmax.py thêm n_iter_, converged_, history['stop_reason'] và fit_path
   (warm start, λ giảm dần). D4 quét λ bằng fit_path và ghi converged_ cho mọi mô hình.
   Không đổi thuật toán, kết quả A2 giữ nguyên.
+- [2026-11-22] Hiệu chuẩn (A4): bộ hiệu chuẩn nhận scores (n, K) → xác suất (n, K)
+  (softmax: decision_function; NB: predict_log_proba; SVM: decision_function); fit trên val_a,
+  chọn bằng log-loss + ECE trên val_b; K từ n_classes, không suy ra từ y; Platt/PAVA đa lớp
+  one-vs-rest, kẹp [1e-6, 1 − 1e-6], chuẩn hóa hàng. Platt smooth dùng số mẫu (không trọng số)
+  cho N₊, N₋; temperature giới hạn T ∈ [1e-4, 1e4].
+- [2026-11-22] ECE: 15 bin đều, bin m = ((m−1)/M, m/M], bin 1 gồm cả 0, bin rỗng bỏ qua;
+  kind binary / top_label / classwise (trung bình ECE binary theo lớp);
+  ECE lớp lừa đảo = ece(probs[:, 0], labels == 0, kind="binary").
 
 ## Bước tiếp theo
 - Kiên: tạo repo, requirements.txt, .gitignore (kiểm tra data/raw/ bằng git status),

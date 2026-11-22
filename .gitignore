@@ -35,3 +35,4 @@ models/*
 # Văn bản đồng ý đã ký
 consent/*
 !consent/.gitkeep
+.venv*/
