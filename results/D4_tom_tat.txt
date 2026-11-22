@@ -1,0 +1,117 @@
+=== D4_cv: cấu hình được chọn (mean ± std qua 5 fold) ===
+    mo_hinh sieu_tham_so  gia_tri  logloss_mean  logloss_std  f1_macro_mean  f1_macro_std  n_iter  n_iter_max  converged  so_fold_hoi_tu  chon
+    softmax          lam   0.0001        0.2765       0.0545         0.8882        0.0365     832        1120          1               5     1
+naive_bayes        alpha   1.0000        0.3656       0.0534         0.8498        0.0237    <NA>        <NA>       <NA>            <NA>     1
+        svm            C   0.0300        0.3383       0.1173         0.8839        0.0296    <NA>        <NA>       <NA>            <NA>     1
+
+=== D4_hieu_chuan (val_b; bộ hiệu chuẩn fit trên val_a) ===
+    mo_hinh phuong_phap  logloss_val_b  ece_top_val_b  ece_lua_dao_val_b  f1_macro_argmax_val_b  chon
+    softmax        none         0.2621         0.0599             0.0640                 0.8954     0
+    softmax       platt         0.2642         0.0622             0.0675                 0.8857     0
+    softmax    isotonic         0.4244         0.0398             0.0449                 0.8915     0
+    softmax temperature         0.2387         0.0445             0.0353                 0.8954     1
+naive_bayes        none         0.2968         0.0526             0.0659                 0.8893     1
+naive_bayes       platt         0.3019         0.0818             0.0879                 0.8840     0
+naive_bayes    isotonic         0.3787         0.0284             0.0281                 0.8963     0
+naive_bayes temperature         0.2977         0.0556             0.0833                 0.8893     0
+        svm       platt         0.2882         0.0611             0.0936                 0.8644     0
+        svm    isotonic         0.4668         0.0475             0.0533                 0.8655     0
+        svm temperature         0.2519         0.0291             0.0653                 0.9037     1
+
+=== val_b, sau hiệu chuẩn, quy tắc chi phí tối thiểu argmin_j Σ_i C[i,j]·p(i|x) ===
+
+[softmax] hiệu chuẩn = temperature
+  F1 macro = 0.8942
+  Chi phí trung bình thực tế mean C[y, ŷ] = 0.3605
+  Chi phí kỳ vọng trung bình theo mô hình mean min_j (P·C)_j = 0.4215
+  Ma trận nhầm lẫn (hàng = thật, cột = đoán; lua_dao, rac, hop_le):
+         lua_dao  rac  hop_le
+lua_dao       41    0       2
+rac            3   61       5
+hop_le         5    3      52
+
+[naive_bayes] hiệu chuẩn = none
+  F1 macro = 0.9026
+  Chi phí trung bình thực tế mean C[y, ŷ] = 0.5233
+  Chi phí kỳ vọng trung bình theo mô hình mean min_j (P·C)_j = 0.3227
+  Ma trận nhầm lẫn (hàng = thật, cột = đoán; lua_dao, rac, hop_le):
+         lua_dao  rac  hop_le
+lua_dao       37    0       6
+rac            0   65       4
+hop_le         4    2      54
+
+[svm] hiệu chuẩn = temperature
+  F1 macro = 0.8762
+  Chi phí trung bình thực tế mean C[y, ŷ] = 0.5407
+  Chi phí kỳ vọng trung bình theo mô hình mean min_j (P·C)_j = 0.4669
+  Ma trận nhầm lẫn (hàng = thật, cột = đoán; lua_dao, rac, hop_le):
+         lua_dao  rac  hop_le
+lua_dao       40    0       3
+rac            4   64       1
+hop_le        11    1      48
+
+=== threshold.json ===
+{
+  "labels": [
+    "lua_dao",
+    "rac",
+    "hop_le"
+  ],
+  "cost_matrix": [
+    [
+      0.0,
+      5.0,
+      10.0
+    ],
+    [
+      1.0,
+      0.0,
+      1.0
+    ],
+    [
+      5.0,
+      3.0,
+      0.0
+    ]
+  ],
+  "cost_matrix_note": "C[lớp thật, lớp đoán], thứ tự labels; xem docs/ma_tran_chi_phi.md",
+  "fpr_muc_tieu": 0.01,
+  "diem": "p(lua_dao | x) sau hiệu chuẩn; báo lừa đảo khi điểm >= threshold",
+  "n_lua_dao_val_b": 43,
+  "n_khong_lua_dao_val_b": 129,
+  "pi_train": [
+    0.2865740740740741,
+    0.37916666666666665,
+    0.33425925925925926
+  ],
+  "models": {
+    "softmax": {
+      "calibrator": "temperature",
+      "threshold": 0.7076425458887482,
+      "fpr_val_b": 0.007751937984496124,
+      "recall_lua_dao_val_b": 0.7906976744186046,
+      "so_bao_nham_val_b": 1
+    },
+    "naive_bayes": {
+      "calibrator": "none",
+      "threshold": 0.9038263562879011,
+      "fpr_val_b": 0.007751937984496124,
+      "recall_lua_dao_val_b": 0.18604651162790697,
+      "so_bao_nham_val_b": 1
+    },
+    "svm": {
+      "calibrator": "temperature",
+      "threshold": 0.6597216018333596,
+      "fpr_val_b": 0.007751937984496124,
+      "recall_lua_dao_val_b": 0.8604651162790697,
+      "so_bao_nham_val_b": 1
+    }
+  }
+}
+
+=== Cấu hình máy ===
+CPU: Intel64 Family 6 Model 154 Stepping 3, GenuineIntel (16 luồng logic)
+RAM: 15.7 GB
+OS: Windows-11-10.0.26200-SP0
+Python 3.12.10 | numpy 2.5.5 | scikit-learn 1.9.1 | pandas 3.1.1
+Tổng thời gian chạy notebook: 63.8 s
