@@ -27,15 +27,15 @@
 Cột file raw data/raw/<tên>_<ngày>.csv:
 - text: nội dung tin gốc
 - date: YYYY-MM-DD (ngày nhận với tình nguyện viên, ngày đăng với bản tin/báo chí)
-- source_type: co_quan | bao_chi | tinh_nguyen
-- source_ref: đường dẫn bài gốc, hoặc mã văn bản đồng ý
+- nguon: nguồn lấy
+- label: chưa được gán nhãn
 
 Cột data/masked/messages_masked.csv (do mask.py sinh):
 - id: mã tin, duy nhất
 - text: nội dung đã che
-- date, source_type, source_ref: giữ nguyên từ file raw
-- collector: người thu thập
+- date, nguon giữ nguyên từ raw
 - reviewed: 0/1; chỉ dùng tin reviewed = 1 ở các bước sau
+- label: chưa gán nhãn
 
 Khung hàm mẫu:
 ```python
