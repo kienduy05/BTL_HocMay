@@ -1,0 +1,181 @@
+﻿mo_hinh,loai_ngram,lop,hang,dac_trung,trong_so
+softmax,tu,lua_dao,1,tu: [LINK],2.5672995579726314
+softmax,tu,lua_dao,2,tu: [LINK] [LINK_LẠ],1.3723223370086577
+softmax,tu,lua_dao,3,tu: [LINK_LẠ],1.3723223370086577
+softmax,tu,lua_dao,4,tu: số,1.0909747997024573
+softmax,tu,lua_dao,5,tu: bi,1.0326067685997935
+softmax,tu,lua_dao,6,tu: [NUMBER] để,0.9617084524963929
+softmax,tu,lua_dao,7,tu: zalo [NUMBER],0.9309707991581737
+softmax,tu,lua_dao,8,tu: zalo,0.903227990799686
+softmax,tu,lua_dao,9,tu: [LINK] [NUMBER],0.9011995937702882
+softmax,tu,lua_dao,10,tu: số tài_khoản,0.9001820160828793
+softmax,tu,rac,1,tu: qc,1.85303687060445
+softmax,tu,rac,2,tu: soạn,1.1790915253189183
+softmax,tu,rac,3,tu: data,1.178561585408745
+softmax,tu,rac,4,tu: sale,0.9840496887134904
+softmax,tu,rac,5,tu: miễn_phí,0.9559329263791135
+softmax,tu,rac,6,tu: soan,0.9398672252889319
+softmax,tu,rac,7,tu: gui,0.9191540244288586
+softmax,tu,rac,8,tu: gửi,0.9189627086862477
+softmax,tu,rac,9,tu: co,0.9144327904171278
+softmax,tu,rac,10,tu: %,0.8774190998331083
+softmax,tu,hop_le,1,tu: da,1.4120462380919863
+softmax,tu,hop_le,2,tu: con,1.0790552869818868
+softmax,tu,hop_le,3,tu: đã,1.00544567695671
+softmax,tu,hop_le,4,tu: trân_trọng,0.9433758368270031
+softmax,tu,hop_le,5,tu: mang,0.9295549534452932
+softmax,tu,hop_le,6,tu: nhé,0.9034688095860621
+softmax,tu,hop_le,7,tu: [TIỀN] trân_trọng,0.8704351800766852
+softmax,tu,hop_le,8,tu: ma,0.8512889749568284
+softmax,tu,hop_le,9,tu: la,0.8459863875355701
+softmax,tu,hop_le,10,tu: dân,0.8339272419848626
+softmax,ky_tu,lua_dao,1,ky_tu: IN,1.485488855449535
+softmax,ky_tu,lua_dao,2,ky_tu:  [L,1.4581054434741814
+softmax,ky_tu,lua_dao,3,ky_tu:  [LI,1.4581054434741814
+softmax,ky_tu,lua_dao,4,ky_tu:  [LIN,1.4581054434741814
+softmax,ky_tu,lua_dao,5,ky_tu: INK,1.4581054434741814
+softmax,ky_tu,lua_dao,6,ky_tu: LI,1.4581054434741814
+softmax,ky_tu,lua_dao,7,ky_tu: LIN,1.4581054434741814
+softmax,ky_tu,lua_dao,8,ky_tu: LINK,1.4581054434741814
+softmax,ky_tu,lua_dao,9,ky_tu: NK,1.4581054434741814
+softmax,ky_tu,lua_dao,10,ky_tu: [L,1.4581054434741814
+softmax,ky_tu,rac,1,ky_tu: qc,1.2435813275155114
+softmax,ky_tu,rac,2,ky_tu: qc ,1.1925291948430845
+softmax,ky_tu,rac,3,ky_tu:  qc,1.1849585651490917
+softmax,ky_tu,rac,4,ky_tu:  qc ,1.1849585651490917
+softmax,ky_tu,rac,5,ky_tu:  soan,0.9656728543451187
+softmax,ky_tu,rac,6,ky_tu: soan,0.9656728543451187
+softmax,ky_tu,rac,7,ky_tu: soan ,0.9656728543451187
+softmax,ky_tu,rac,8,ky_tu:  soa,0.9627443449604696
+softmax,ky_tu,rac,9,ky_tu: soa,0.9627443449604696
+softmax,ky_tu,rac,10,ky_tu:  dat,0.8777129641782264
+softmax,ky_tu,hop_le,1,ky_tu:  da ,1.3729209121554276
+softmax,ky_tu,hop_le,2,ky_tu: on ,1.3339092882211823
+softmax,ky_tu,hop_le,3,ky_tu: da ,1.248713802294764
+softmax,ky_tu,hop_le,4,ky_tu: con,1.2485847548778914
+softmax,ky_tu,hop_le,5,ky_tu:  con,1.2475386114539957
+softmax,ky_tu,hop_le,6,ky_tu: on,1.039252972905929
+softmax,ky_tu,hop_le,7,ky_tu:  huy,0.9125732470716673
+softmax,ky_tu,hop_le,8,ky_tu: cong ,0.873969063967165
+softmax,ky_tu,hop_le,9,ky_tu:  cong,0.8604414075757127
+softmax,ky_tu,hop_le,10,ky_tu: cong,0.8604414075757127
+svm,tu,lua_dao,1,tu: [LINK],0.5726652274975459
+svm,tu,lua_dao,2,tu: [LINK] [LINK_LẠ],0.4168566133785617
+svm,tu,lua_dao,3,tu: [LINK_LẠ],0.4168566133785617
+svm,tu,lua_dao,4,tu: số,0.20385669314853042
+svm,tu,lua_dao,5,tu: zalo,0.19924676562250315
+svm,tu,lua_dao,6,tu: zalo [NUMBER],0.191916604194836
+svm,tu,lua_dao,7,tu: nhận,0.18304673265562327
+svm,tu,lua_dao,8,tu: bị,0.17913790335023255
+svm,tu,lua_dao,9,tu: link,0.17552176312866852
+svm,tu,lua_dao,10,tu: bi,0.17221261512124092
+svm,tu,rac,1,tu: qc,0.494134558957552
+svm,tu,rac,2,tu: soạn,0.3286622795269707
+svm,tu,rac,3,tu: data,0.2979643668452754
+svm,tu,rac,4,tu: gửi,0.2866571670005624
+svm,tu,rac,5,tu: %,0.2745107910942862
+svm,tu,rac,6,tu: [NUMBER] [TIỀN],0.24941848693430607
+svm,tu,rac,7,tu: soan,0.23073548083083967
+svm,tu,rac,8,tu: cskh [NUMBER],0.22620073910367666
+svm,tu,rac,9,tu: 199,0.22015979887570658
+svm,tu,rac,10,tu: từ_chối,0.21587180568069914
+svm,tu,hop_le,1,tu: đã,0.2648506499107853
+svm,tu,hop_le,2,tu: ma,0.2529719450273776
+svm,tu,hop_le,3,tu: trân_trọng,0.23498465988547845
+svm,tu,hop_le,4,tu: da,0.2317819573898575
+svm,tu,hop_le,5,tu: la,0.23081974778340755
+svm,tu,hop_le,6,tu: otp,0.21819542262907604
+svm,tu,hop_le,7,tu: [OTP],0.2156865192938163
+svm,tu,hop_le,8,tu: quy khach,0.21166948173232705
+svm,tu,hop_le,9,tu: [DATE],0.2008262406283297
+svm,tu,hop_le,10,tu: [TIỀN] trân_trọng,0.20057421777992668
+svm,ky_tu,lua_dao,1,ky_tu: IN,0.35710115492466626
+svm,ky_tu,lua_dao,2,ky_tu:  [L,0.3545621820804031
+svm,ky_tu,lua_dao,3,ky_tu:  [LI,0.3545621820804031
+svm,ky_tu,lua_dao,4,ky_tu:  [LIN,0.3545621820804031
+svm,ky_tu,lua_dao,5,ky_tu: INK,0.3545621820804031
+svm,ky_tu,lua_dao,6,ky_tu: LI,0.3545621820804031
+svm,ky_tu,lua_dao,7,ky_tu: LIN,0.3545621820804031
+svm,ky_tu,lua_dao,8,ky_tu: LINK,0.3545621820804031
+svm,ky_tu,lua_dao,9,ky_tu: NK,0.3545621820804031
+svm,ky_tu,lua_dao,10,ky_tu: [L,0.3545621820804031
+svm,ky_tu,rac,1,ky_tu: qc,0.31607583849872295
+svm,ky_tu,rac,2,ky_tu: qc ,0.31310312462734774
+svm,ky_tu,rac,3,ky_tu:  qc,0.30751807015654087
+svm,ky_tu,rac,4,ky_tu:  qc ,0.30751807015654087
+svm,ky_tu,rac,5,ky_tu:  soan,0.252829619516932
+svm,ky_tu,rac,6,ky_tu: soan,0.252829619516932
+svm,ky_tu,rac,7,ky_tu: soan ,0.252829619516932
+svm,ky_tu,rac,8,ky_tu:  soa,0.25212368579250266
+svm,ky_tu,rac,9,ky_tu: soa,0.25212368579250266
+svm,ky_tu,rac,10,ky_tu:  gui,0.22765860503661842
+svm,ky_tu,hop_le,1,ky_tu:  da ,0.27783567716236074
+svm,ky_tu,hop_le,2,ky_tu: con,0.27403555868525675
+svm,ky_tu,hop_le,3,ky_tu:  con,0.273582965168876
+svm,ky_tu,hop_le,4,ky_tu: da ,0.2568089832092758
+svm,ky_tu,hop_le,5,ky_tu: on ,0.23493333710455733
+svm,ky_tu,hop_le,6,ky_tu:  ma ,0.23114297229566766
+svm,ky_tu,hop_le,7,ky_tu: ma ,0.2246811450541982
+svm,ky_tu,hop_le,8,ky_tu: on,0.21850132975053574
+svm,ky_tu,hop_le,9,ky_tu: cong ,0.21459331211387317
+svm,ky_tu,hop_le,10,ky_tu:  cong,0.21309993576860917
+naive_bayes,tu,lua_dao,1,tu: [LINK] [LINK_LẠ],1.9784435732179482
+naive_bayes,tu,lua_dao,2,tu: [LINK_LẠ],1.9784435732179482
+naive_bayes,tu,lua_dao,3,tu: hợp_đồng,1.8736956469408774
+naive_bayes,tu,lua_dao,4,tu: n,1.8590643162508211
+naive_bayes,tu,lua_dao,5,tu: m,1.8495918312401027
+naive_bayes,tu,lua_dao,6,tu: [KÝ_TỰ_LẠ],1.8473159691160141
+naive_bayes,tu,lua_dao,7,tu: link,1.806479726917983
+naive_bayes,tu,lua_dao,8,tu: đ,1.7473159293170184
+naive_bayes,tu,lua_dao,9,tu: bạn có,1.6789127074218406
+naive_bayes,tu,lua_dao,10,tu: ng,1.6711619642224864
+naive_bayes,tu,rac,1,tu: qc,3.1983241479167503
+naive_bayes,tu,rac,2,tu: 199,2.573090223234911
+naive_bayes,tu,rac,3,tu: từ_chối qc,2.4829171897703812
+naive_bayes,tu,rac,4,tu: qc soạn,2.457790663761207
+naive_bayes,tu,rac,5,tu: soạn,2.4386646800449885
+naive_bayes,tu,rac,6,tu: gửi 199,2.398247871772174
+naive_bayes,tu,rac,7,tu: từ_chối,2.3863109044988633
+naive_bayes,tu,rac,8,tu: [TIỀN] từ_chối,2.3585481581042576
+naive_bayes,tu,rac,9,tu: [TIỀN] [TIME],2.289225602094005
+naive_bayes,tu,rac,10,tu: [TIME] cskh,2.2369121411519046
+naive_bayes,tu,hop_le,1,tu: [OTP],2.3563342881078064
+naive_bayes,tu,hop_le,2,tu: otp,2.2988294333976658
+naive_bayes,tu,hop_le,3,tu: ma otp,2.2032314097719947
+naive_bayes,tu,hop_le,4,tu: ma,1.865869131558255
+naive_bayes,tu,hop_le,5,tu: ma xac,1.8489163447534551
+naive_bayes,tu,hop_le,6,tu: [TIỀN] nd,1.8246204966707484
+naive_bayes,tu,hop_le,7,tu: la,1.8060734385648889
+naive_bayes,tu,hop_le,8,tu: khach la,1.7937048058891811
+naive_bayes,tu,hop_le,9,tu: viettel tb,1.763344328159814
+naive_bayes,tu,hop_le,10,tu: tieu dung,1.7212619515113765
+naive_bayes,ky_tu,lua_dao,1,ky_tu: LẠ,1.7396734254914055
+naive_bayes,ky_tu,lua_dao,2,ky_tu: LẠ],1.7396734254914055
+naive_bayes,ky_tu,lua_dao,3,ky_tu: LẠ] ,1.7396734254914055
+naive_bayes,ky_tu,lua_dao,4,ky_tu: _L,1.7396734254914055
+naive_bayes,ky_tu,lua_dao,5,ky_tu: _LẠ,1.7396734254914055
+naive_bayes,ky_tu,lua_dao,6,ky_tu: _LẠ],1.7396734254914055
+naive_bayes,ky_tu,lua_dao,7,ky_tu: _LẠ] ,1.7396734254914055
+naive_bayes,ky_tu,lua_dao,8,ky_tu: Ạ],1.7396734254914055
+naive_bayes,ky_tu,lua_dao,9,ky_tu: Ạ] ,1.7396734254914055
+naive_bayes,ky_tu,lua_dao,10,ky_tu: gro,1.729080615844543
+naive_bayes,ky_tu,rac,1,ky_tu:  qc,2.7471364718760327
+naive_bayes,ky_tu,rac,2,ky_tu:  qc ,2.7471364718760327
+naive_bayes,ky_tu,rac,3,ky_tu: qc ,2.689255509311515
+naive_bayes,ky_tu,rac,4,ky_tu: qc,2.6589258518856598
+naive_bayes,ky_tu,rac,5,ky_tu:  199,2.1167986617966132
+naive_bayes,ky_tu,rac,6,ky_tu:  199 ,2.1167986617966132
+naive_bayes,ky_tu,rac,7,ky_tu: 199,2.1167986617966132
+naive_bayes,ky_tu,rac,8,ky_tu: 199 ,2.1167986617966132
+naive_bayes,ky_tu,rac,9,ky_tu:  tc,2.0668855222453075
+naive_bayes,ky_tu,rac,10,ky_tu:  soan,1.9605846939130567
+naive_bayes,ky_tu,hop_le,1,ky_tu:  otp,1.9975265377034042
+naive_bayes,ky_tu,hop_le,2,ky_tu:  otp ,1.9975265377034042
+naive_bayes,ky_tu,hop_le,3,ky_tu: otp,1.9975265377034042
+naive_bayes,ky_tu,hop_le,4,ky_tu: otp ,1.9975265377034042
+naive_bayes,ky_tu,hop_le,5,ky_tu:  [O,1.9813451416176555
+naive_bayes,ky_tu,hop_le,6,ky_tu:  [OT,1.9813451416176555
+naive_bayes,ky_tu,hop_le,7,ky_tu:  [OTP,1.9813451416176555
+naive_bayes,ky_tu,hop_le,8,ky_tu: OT,1.9813451416176555
+naive_bayes,ky_tu,hop_le,9,ky_tu: OTP,1.9813451416176555
+naive_bayes,ky_tu,hop_le,10,ky_tu: OTP],1.9813451416176555

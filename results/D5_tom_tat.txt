@@ -1,0 +1,163 @@
+test: 355 tin, theo lớp {'lua_dao': 97, 'rac': 139, 'hop_le': 119}; date 2026-07-24 → 2026-08-03 (val_b 2026-07-24 → 2026-08-03); nguồn {'tran2026': 355}
+Ngưỡng: {"softmax|truoc": 0.624403739382046, "softmax|sau": 0.7076425458887482, "naive_bayes|truoc": 0.9038263562879011, "naive_bayes|sau": 0.9038263562879011, "svm|truoc": 0.4301873436467626, "svm|sau": 0.6597216018333596}
+
+=== D5_metrics (giá trị gốc | mean ± std | KTC 95%) ===
+mo_hinh                                           naive_bayes                                                                         softmax                                                                             svm                                        
+hieu_chuan                                                sau                                   truoc                                     sau                                   truoc                                     sau                                   truoc
+chi_so                                                                                                                                                                                                                                                               
+f1_macro               0.843 | 0.844 ± 0.021 | [0.802; 0.883]  0.843 | 0.844 ± 0.021 | [0.802; 0.883]  0.897 | 0.898 ± 0.017 | [0.863; 0.928]  0.885 | 0.886 ± 0.017 | [0.852; 0.918]  0.849 | 0.849 ± 0.019 | [0.811; 0.888]  0.722 | 0.721 ± 0.024 | [0.674; 0.768]
+chi_phi_tb             0.924 | 0.921 ± 0.138 | [0.654; 1.194]  0.924 | 0.921 ± 0.138 | [0.654; 1.194]  0.521 | 0.517 ± 0.098 | [0.338; 0.716]  0.546 | 0.543 ± 0.097 | [0.366; 0.735]  0.777 | 0.772 ± 0.117 | [0.552; 0.997]  1.011 | 1.010 ± 0.105 | [0.811; 1.220]
+recall_lua_dao_at_fpr  0.237 | 0.236 ± 0.045 | [0.147; 0.325]  0.237 | 0.236 ± 0.045 | [0.147; 0.325]  0.784 | 0.785 ± 0.043 | [0.697; 0.865]  0.784 | 0.785 ± 0.043 | [0.697; 0.865]  0.701 | 0.701 ± 0.047 | [0.606; 0.791]  0.649 | 0.650 ± 0.048 | [0.557; 0.744]
+fpr_at_threshold       0.004 | 0.004 ± 0.004 | [0.000; 0.012]  0.004 | 0.004 ± 0.004 | [0.000; 0.012]  0.016 | 0.016 ± 0.008 | [0.004; 0.032]  0.008 | 0.008 ± 0.005 | [0.000; 0.020]  0.023 | 0.023 ± 0.009 | [0.007; 0.042]  0.012 | 0.012 ± 0.007 | [0.000; 0.027]
+ece_top_label          0.098 | 0.103 ± 0.018 | [0.071; 0.137]  0.098 | 0.103 ± 0.018 | [0.071; 0.137]  0.040 | 0.049 ± 0.012 | [0.028; 0.075]  0.049 | 0.060 ± 0.011 | [0.038; 0.081]  0.047 | 0.056 ± 0.013 | [0.034; 0.083]  0.308 | 0.309 ± 0.017 | [0.277; 0.340]
+ece_lua_dao            0.094 | 0.104 ± 0.015 | [0.077; 0.133]  0.094 | 0.104 ± 0.015 | [0.077; 0.133]  0.038 | 0.051 ± 0.010 | [0.033; 0.071]  0.033 | 0.051 ± 0.008 | [0.036; 0.068]  0.042 | 0.057 ± 0.011 | [0.037; 0.079]  0.197 | 0.203 ± 0.012 | [0.179; 0.228]
+log_loss               0.488 | 0.486 ± 0.060 | [0.380; 0.609]  0.488 | 0.486 ± 0.060 | [0.380; 0.609]  0.277 | 0.275 ± 0.040 | [0.201; 0.357]  0.287 | 0.286 ± 0.028 | [0.233; 0.342]  0.328 | 0.327 ± 0.038 | [0.258; 0.405]  0.654 | 0.653 ± 0.014 | [0.626; 0.678]
+bao_nham_lua_dao       0.058 | 0.058 ± 0.014 | [0.031; 0.086]  0.058 | 0.058 ± 0.014 | [0.031; 0.086]  0.058 | 0.058 ± 0.015 | [0.030; 0.089]  0.074 | 0.074 ± 0.017 | [0.041; 0.108]  0.105 | 0.103 ± 0.019 | [0.067; 0.143]  0.310 | 0.310 ± 0.029 | [0.253; 0.368]
+
+=== recall theo lớp (quy tắc chi phí) ===
+mo_hinh                                    naive_bayes                                                                         softmax                                                                             svm                                        
+hieu_chuan                                         sau                                   truoc                                     sau                                   truoc                                     sau                                   truoc
+chi_so                                                                                                                                                                                                                                                        
+recall_hop_le   0.832 | 0.834 ± 0.034 | [0.764; 0.898]  0.832 | 0.834 ± 0.034 | [0.764; 0.898]  0.857 | 0.858 ± 0.033 | [0.790; 0.918]  0.824 | 0.825 ± 0.036 | [0.754; 0.893]  0.765 | 0.767 ± 0.039 | [0.690; 0.841]  0.454 | 0.455 ± 0.047 | [0.366; 0.544]
+recall_lua_dao  0.742 | 0.742 ± 0.046 | [0.655; 0.830]  0.742 | 0.742 ± 0.046 | [0.655; 0.830]  0.897 | 0.898 ± 0.030 | [0.837; 0.953]  0.907 | 0.908 ± 0.028 | [0.848; 0.959]  0.856 | 0.856 ± 0.035 | [0.783; 0.919]  0.969 | 0.969 ± 0.018 | [0.931; 1.000]
+recall_rac      0.950 | 0.950 ± 0.019 | [0.910; 0.986]  0.950 | 0.950 ± 0.019 | [0.910; 0.986]  0.942 | 0.943 ± 0.020 | [0.902; 0.979]  0.935 | 0.936 ± 0.021 | [0.893; 0.974]  0.935 | 0.936 ± 0.021 | [0.893; 0.973]  0.813 | 0.812 ± 0.034 | [0.743; 0.875]
+
+=== D5_paired ===
+              so_sanh                chi_so  hieu_goc    mean    std  ci_low  ci_high  n_hop_le  ci_chua_0
+softmax - naive_bayes              f1_macro    0.0537  0.0539 0.0185  0.0173   0.0900      1000      False
+softmax - naive_bayes            chi_phi_tb   -0.4028 -0.4043 0.1110 -0.6310  -0.2000      1000      False
+softmax - naive_bayes recall_lua_dao_at_fpr    0.5464  0.5487 0.0511  0.4476   0.6471      1000      False
+softmax - naive_bayes      fpr_at_threshold    0.0116  0.0119 0.0066  0.0000   0.0268      1000       True
+softmax - naive_bayes         ece_top_label   -0.0575 -0.0534 0.0153 -0.0830  -0.0229      1000      False
+softmax - naive_bayes           ece_lua_dao   -0.0561 -0.0529 0.0129 -0.0781  -0.0278      1000      False
+softmax - naive_bayes              log_loss   -0.2110 -0.2108 0.0399 -0.2875  -0.1369      1000      False
+softmax - naive_bayes        recall_lua_dao    0.1546  0.1557 0.0368  0.0879   0.2292      1000      False
+softmax - naive_bayes            recall_rac   -0.0072 -0.0068 0.0168 -0.0414   0.0257      1000       True
+softmax - naive_bayes         recall_hop_le    0.0252  0.0243 0.0359 -0.0431   0.1008      1000       True
+softmax - naive_bayes      bao_nham_lua_dao    0.0000  0.0005 0.0159 -0.0313   0.0315      1000       True
+        softmax - svm              f1_macro    0.0486  0.0485 0.0126  0.0245   0.0742      1000      False
+        softmax - svm            chi_phi_tb   -0.2563 -0.2553 0.0705 -0.4001  -0.1296      1000      False
+        softmax - svm recall_lua_dao_at_fpr    0.0825  0.0833 0.0285  0.0319   0.1415      1000      False
+        softmax - svm      fpr_at_threshold   -0.0078 -0.0077 0.0079 -0.0238   0.0077      1000       True
+        softmax - svm         ece_top_label   -0.0073 -0.0065 0.0129 -0.0322   0.0179      1000       True
+        softmax - svm           ece_lua_dao   -0.0041 -0.0064 0.0087 -0.0232   0.0112      1000       True
+        softmax - svm              log_loss   -0.0510 -0.0512 0.0107 -0.0723  -0.0295      1000      False
+        softmax - svm        recall_lua_dao    0.0412  0.0420 0.0210  0.0096   0.0918      1000      False
+        softmax - svm            recall_rac    0.0072  0.0077 0.0073  0.0000   0.0244      1000       True
+        softmax - svm         recall_hop_le    0.0924  0.0909 0.0292  0.0354   0.1513      1000      False
+        softmax - svm      bao_nham_lua_dao   -0.0465 -0.0453 0.0127 -0.0698  -0.0228      1000      False
+
+=== D5_drift ===
+    mo_hinh  hieu_chuan                chi_so  val_b   test  chenh_test_tru_val_b  chenh_ci_low  chenh_ci_high  ci_chua_0
+    softmax temperature              f1_macro 0.8942 0.8971                0.0029       -0.0491         0.0624       True
+    softmax temperature            chi_phi_tb 0.3605 0.5211                0.1607       -0.1594         0.4294       True
+    softmax temperature recall_lua_dao_at_fpr 0.7907 0.7835               -0.0072       -0.1429         0.1495       True
+    softmax temperature      fpr_at_threshold 0.0078 0.0155                0.0078       -0.0125         0.0277       True
+    softmax temperature         ece_top_label 0.0445 0.0400               -0.0045       -0.0537         0.0261       True
+    softmax temperature           ece_lua_dao 0.0353 0.0379                0.0027       -0.0308         0.0273       True
+    softmax temperature              log_loss 0.2387 0.2773                0.0386       -0.0868         0.1481       True
+    softmax temperature        recall_lua_dao 0.9535 0.8969               -0.0566       -0.1400         0.0387       True
+    softmax temperature            recall_rac 0.8841 0.9424                0.0584       -0.0166         0.1420       True
+    softmax temperature         recall_hop_le 0.8667 0.8571               -0.0095       -0.1113         0.1021       True
+    softmax temperature      bao_nham_lua_dao 0.0620 0.0581               -0.0039       -0.0560         0.0441       True
+naive_bayes        none              f1_macro 0.9026 0.8434               -0.0592       -0.1181        -0.0022      False
+naive_bayes        none            chi_phi_tb 0.5233 0.9239                0.4007       -0.0062         0.7914       True
+naive_bayes        none recall_lua_dao_at_fpr 0.1860 0.2371                0.0511       -0.1015         0.1798       True
+naive_bayes        none      fpr_at_threshold 0.0078 0.0039               -0.0039       -0.0233         0.0082       True
+naive_bayes        none         ece_top_label 0.0526 0.0975                0.0449       -0.0141         0.0820       True
+naive_bayes        none           ece_lua_dao 0.0659 0.0940                0.0282       -0.0110         0.0681       True
+naive_bayes        none              log_loss 0.2968 0.4883                0.1916        0.0251         0.3490      False
+naive_bayes        none        recall_lua_dao 0.8605 0.7423               -0.1182       -0.2452         0.0190       True
+naive_bayes        none            recall_rac 0.9420 0.9496                0.0076       -0.0516         0.0773       True
+naive_bayes        none         recall_hop_le 0.9000 0.8319               -0.0681       -0.1677         0.0387       True
+naive_bayes        none      bao_nham_lua_dao 0.0310 0.0581                0.0271       -0.0121         0.0647       True
+        svm temperature              f1_macro 0.8762 0.8485               -0.0277       -0.0848         0.0366       True
+        svm temperature            chi_phi_tb 0.5407 0.7775                0.2368       -0.1281         0.5646       True
+        svm temperature recall_lua_dao_at_fpr 0.8605 0.7010               -0.1594       -0.2984        -0.0284      False
+        svm temperature      fpr_at_threshold 0.0078 0.0233                0.0155       -0.0080         0.0389       True
+        svm temperature         ece_top_label 0.0291 0.0472                0.0181       -0.0367         0.0398       True
+        svm temperature           ece_lua_dao 0.0653 0.0421               -0.0232       -0.0522         0.0108       True
+        svm temperature              log_loss 0.2519 0.3283                0.0764       -0.0432         0.1835       True
+        svm temperature        recall_lua_dao 0.9302 0.8557               -0.0746       -0.1750         0.0329       True
+        svm temperature            recall_rac 0.9275 0.9353                0.0077       -0.0599         0.0849       True
+        svm temperature         recall_hop_le 0.8000 0.7647               -0.0353       -0.1639         0.0976       True
+        svm temperature      bao_nham_lua_dao 0.1163 0.1047               -0.0116       -0.0773         0.0516       True
+
+=== D5_prior_shift ===
+  kich_ban                 pi_moi     mo_hinh           chi_so  truoc_mean  truoc_std  sau_mean  sau_std  hieu_mean  hieu_ci_low  hieu_ci_high  n_hop_le
+lua_dao 5% [0.05, 0.5049, 0.4451]     softmax         log_loss      0.2383     0.0383    0.2060   0.0342    -0.0323      -0.0590       -0.0082      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]     softmax    ece_top_label      0.0424     0.0101    0.0386   0.0097    -0.0038      -0.0232        0.0162      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]     softmax      ece_lua_dao      0.0466     0.0075    0.0222   0.0052    -0.0244      -0.0382       -0.0103      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]     softmax       chi_phi_tb      0.3716     0.0687    0.2407   0.0565    -0.1309      -0.2563       -0.0113      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]     softmax         f1_macro      0.8162     0.0249    0.8873   0.0285     0.0711       0.0161        0.1207      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]     softmax   recall_lua_dao      0.8979     0.0685    0.7332   0.0992    -0.1647      -0.3333        0.0000      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]     softmax bao_nham_lua_dao      0.0593     0.0122    0.0079   0.0050    -0.0515      -0.0742       -0.0326      1000
+lua_dao 5% [0.05, 0.5049, 0.4451] naive_bayes         log_loss      0.2870     0.0381    0.2993   0.0394     0.0123      -0.0133        0.0357      1000
+lua_dao 5% [0.05, 0.5049, 0.4451] naive_bayes    ece_top_label      0.0646     0.0130    0.0638   0.0126    -0.0008      -0.0209        0.0191      1000
+lua_dao 5% [0.05, 0.5049, 0.4451] naive_bayes      ece_lua_dao      0.0381     0.0078    0.0329   0.0053    -0.0052      -0.0207        0.0095      1000
+lua_dao 5% [0.05, 0.5049, 0.4451] naive_bayes       chi_phi_tb      0.4711     0.0760    0.4187   0.0650    -0.0524      -0.1915        0.0931      1000
+lua_dao 5% [0.05, 0.5049, 0.4451] naive_bayes         f1_macro      0.7822     0.0281    0.7796   0.0420    -0.0027      -0.0856        0.0718      1000
+lua_dao 5% [0.05, 0.5049, 0.4451] naive_bayes   recall_lua_dao      0.7433     0.1009    0.3719   0.1130    -0.3714      -0.6111       -0.1667      1000
+lua_dao 5% [0.05, 0.5049, 0.4451] naive_bayes bao_nham_lua_dao      0.0591     0.0125    0.0082   0.0049    -0.0509      -0.0743       -0.0297      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]         svm         log_loss      0.2715     0.0335    0.2254   0.0293    -0.0461      -0.0746       -0.0204      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]         svm    ece_top_label      0.0428     0.0104    0.0416   0.0097    -0.0012      -0.0249        0.0237      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]         svm      ece_lua_dao      0.0633     0.0084    0.0257   0.0057    -0.0376      -0.0538       -0.0214      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]         svm       chi_phi_tb      0.5967     0.0810    0.3119   0.0650    -0.2849      -0.4282       -0.1296      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]         svm         f1_macro      0.7453     0.0232    0.8396   0.0329     0.0943       0.0334        0.1515      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]         svm   recall_lua_dao      0.8576     0.0798    0.6604   0.1110    -0.1972      -0.3889       -0.0556      1000
+lua_dao 5% [0.05, 0.5049, 0.4451]         svm bao_nham_lua_dao      0.1061     0.0150    0.0195   0.0076    -0.0866      -0.1128       -0.0593      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]     softmax         log_loss      0.2313     0.0380    0.1667   0.0288    -0.0646      -0.1002       -0.0333      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]     softmax    ece_top_label      0.0430     0.0101    0.0346   0.0092    -0.0084      -0.0285        0.0122      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]     softmax      ece_lua_dao      0.0516     0.0075    0.0096   0.0036    -0.0420      -0.0558       -0.0296      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]     softmax       chi_phi_tb      0.3445     0.0622    0.1332   0.0380    -0.2113      -0.3296       -0.1014      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]     softmax         f1_macro      0.7039     0.0238    0.8359   0.0723     0.1320      -0.0171        0.2453      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]     softmax   recall_lua_dao      0.8990     0.1502    0.5910   0.2506    -0.3080      -0.7500        0.0000      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]     softmax bao_nham_lua_dao      0.0593     0.0120    0.0041   0.0035    -0.0552      -0.0798       -0.0342      1000
+lua_dao 1% [0.01, 0.5262, 0.4638] naive_bayes         log_loss      0.2510     0.0341    0.2190   0.0323    -0.0320      -0.0625       -0.0059      1000
+lua_dao 1% [0.01, 0.5262, 0.4638] naive_bayes    ece_top_label      0.0599     0.0123    0.0557   0.0115    -0.0042      -0.0227        0.0147      1000
+lua_dao 1% [0.01, 0.5262, 0.4638] naive_bayes      ece_lua_dao      0.0386     0.0068    0.0094   0.0022    -0.0292      -0.0435       -0.0158      1000
+lua_dao 1% [0.01, 0.5262, 0.4638] naive_bayes       chi_phi_tb      0.3899     0.0652    0.1992   0.0387    -0.1908      -0.3127       -0.0845      1000
+lua_dao 1% [0.01, 0.5262, 0.4638] naive_bayes         f1_macro      0.6849     0.0268    0.7058   0.0754     0.0210      -0.0900        0.1648      1000
+lua_dao 1% [0.01, 0.5262, 0.4638] naive_bayes   recall_lua_dao      0.7518     0.2112    0.1965   0.1973    -0.5553      -1.0000        0.0000      1000
+lua_dao 1% [0.01, 0.5262, 0.4638] naive_bayes bao_nham_lua_dao      0.0592     0.0122    0.0041   0.0035    -0.0551      -0.0798       -0.0342      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]         svm         log_loss      0.2613     0.0330    0.1720   0.0234    -0.0893      -0.1264       -0.0569      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]         svm    ece_top_label      0.0425     0.0102    0.0398   0.0089    -0.0027      -0.0271        0.0210      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]         svm      ece_lua_dao      0.0721     0.0084    0.0102   0.0035    -0.0618      -0.0776       -0.0474      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]         svm       chi_phi_tb      0.5651     0.0732    0.1373   0.0346    -0.4278      -0.5606       -0.2901      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]         svm         f1_macro      0.6499     0.0177    0.7863   0.0800     0.1364      -0.0218        0.2768      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]         svm   recall_lua_dao      0.8628     0.1688    0.4198   0.2443    -0.4430      -1.0000        0.0000      1000
+lua_dao 1% [0.01, 0.5262, 0.4638]         svm bao_nham_lua_dao      0.1064     0.0148    0.0041   0.0035    -0.1023      -0.1283       -0.0741      1000
+
+=== Ma trận nhầm lẫn test (hàng = thật, cột = đoán; lua_dao, rac, hop_le) ===
+[softmax]
+         lua_dao  rac  hop_le
+lua_dao       87    0      10
+rac            2  131       6
+hop_le        13    4     102
+[naive_bayes]
+         lua_dao  rac  hop_le
+lua_dao       72    3      22
+rac            2  132       5
+hop_le        13    7      99
+[svm]
+         lua_dao  rac  hop_le
+lua_dao       83    1      13
+rac            3  130       6
+hop_le        24    4      91
+
+=== Lỗi theo mô hình × (thật → đoán) ===
+mo_hinh              naive_bayes  softmax  svm
+nhan_that nhan_doan                           
+hop_le    lua_dao             13       13   24
+          rac                  7        4    4
+lua_dao   hop_le              22       10   13
+          rac                  3        0    1
+rac       hop_le               5        6    6
+          lua_dao              2        2    3
+
+=== Cấu hình máy ===
+CPU: Intel64 Family 6 Model 154 Stepping 3, GenuineIntel (20 luồng logic)
+RAM: 15.6 GB
+OS: Windows-11-10.0.26200-SP0
+Python 3.14.10 | numpy 2.5.5 | scikit-learn 1.9.1 | pandas 3.1.1
+Tổng thời gian chạy notebook: 31.6 s
